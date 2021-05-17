@@ -1,0 +1,13 @@
+[params]
+date and time = 2021-05-16 17:11:00.329132
+n = 500
+sbr = variable
+l (nm) = 100
+fov (nm) = 75.0
+k = 100
+fwhm (nm) = 250
+size (nm) = 100
+psf_type = doughnut
+central excitation = False
+file name = /ot_min_sigma_vs_sbr_L_100
+

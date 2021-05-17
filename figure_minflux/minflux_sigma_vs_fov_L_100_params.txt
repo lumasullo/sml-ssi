@@ -1,0 +1,13 @@
+[params]
+date and time = 2021-05-15 17:39:45.135496
+n = 500
+sbr = 10
+l (nm) = 100
+fov (nm) = 150.0
+k = 4
+fwhm (nm) = 250
+size (nm) = 500
+psf_type = doughnut
+central excitation = True
+file name = /minflux_sigma_vs_fov_L_100
+

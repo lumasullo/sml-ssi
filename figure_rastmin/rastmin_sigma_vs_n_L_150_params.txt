@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-20 12:28:55.736328
+n = variable
+sbr = 10
+l (nm) = 150
+fov (nm) = 112.5
+k = 16
+fwhm (nm) = 250
+size (nm) = 300
+px (nm) = 1
+psf_type = doughnut
+central excitation = True
+file name = /rastmin_sigma_vs_n_L_150
+

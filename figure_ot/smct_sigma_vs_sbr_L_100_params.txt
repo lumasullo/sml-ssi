@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-20 14:46:02.745896
+n = 500
+sbr = variable
+l (nm) = 100
+fov (nm) = 75.0
+k = 6
+fwhm (nm) = 100
+size (nm) = 120.0
+px (nm) = 1
+psf_type = gaussian
+central excitation = False
+file name = /smct_sigma_vs_sbr_L_100
+

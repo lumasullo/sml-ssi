@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-20 13:49:24.833199
+n = 500
+sbr = variable
+l (nm) = 200
+fov (nm) = 150.0
+k = 16
+fwhm (nm) = 250
+size (nm) = 240.0
+px (nm) = 1
+psf_type = gaussian
+central excitation = True
+file name = /csmlm_sigma_vs_sbr_L_200
+

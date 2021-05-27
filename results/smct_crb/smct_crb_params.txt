@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-20 14:23:53.003253
+n = 500
+sbr = 10
+l (nm) = 300
+fov (nm) = 225.0
+k = 6
+fwhm (nm) = 300
+size (nm) = 300
+px (nm) = 1
+psf_type = gaussian
+central excitation = False
+file name = /smct_crb
+

@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-24 11:03:14.874791
+n = 6000
+sbr = 10
+l (nm) = 600
+fov (nm) = 450.0
+k = 16
+fwhm (nm) = 250
+size (nm) = 800
+px (nm) = 1
+psf_type = gaussian
+central excitation = True
+file name = /csmlm_crb
+

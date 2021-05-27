@@ -1,0 +1,13 @@
+[params]
+date and time = 2021-05-15 16:47:26.380477
+n = 500
+sbr = 10
+l (nm) = 100
+fov (nm) = 75.0
+k = 4
+fwhm (nm) = 250
+size (nm) = 300
+psf_type = doughnut
+central excitation = True
+file name = /minflux_crb
+

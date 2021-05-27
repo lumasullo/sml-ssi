@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-20 14:44:47.231883
+n = 500
+sbr = 10
+l (nm) = 200
+fov (nm) = 300.0
+k = 6
+fwhm (nm) = 200
+size (nm) = 350
+px (nm) = 1
+psf_type = gaussian
+central excitation = False
+file name = /smct_sigma_vs_fov_L_200
+

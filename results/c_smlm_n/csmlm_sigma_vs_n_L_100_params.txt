@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-20 13:11:49.225626
+n = variable
+sbr = 10
+l (nm) = 100
+fov (nm) = 75.0
+k = 16
+fwhm (nm) = 250
+size (nm) = 120.0
+px (nm) = 1
+psf_type = gaussian
+central excitation = True
+file name = /rastmin_sigma_vs_n_L_100
+

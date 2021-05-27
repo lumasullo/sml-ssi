@@ -75,7 +75,7 @@ pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0)
 
 size_nm = 300
 vmin = 1.8
-vmax = 10
+vmax = 12
 
 crbplot = ax[0,0].imshow(crb_map, interpolation=None, extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
                          cmap=cmaps.parula, vmin=vmin, vmax=vmax)
@@ -93,24 +93,10 @@ circ = plt.Circle((0,0), radius=L/2, zorder=10, linestyle='--', facecolor='None'
 ax[0,0].add_patch(circ)
 
 markercolor1 = 'wo'
-markersize1 = 10
+markersize1 = 5
     
 ax[0,0].plot(pos_nm[:, 0], pos_nm[:, 1], markercolor1, markersize=markersize1,
-        markerfacecolor='k', markeredgewidth=1, markeredgecolor='w')
-
-#%% Plot 1D σ vs N
-
-ax[0, 1].plot(N_array, σ_CRB_N['L50'], label='L = 50 nm') 
-ax[0, 1].plot(N_array, σ_CRB_N['L100'], label='L = 100 nm') 
-ax[0, 1].plot(N_array, σ_CRB_N['L150'], label='L = 150 nm') 
-
-ax[0, 1].set_xlabel('N')
-ax[0, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
-
-ax[0, 1].set_xscale('log')
-ax[0, 1].set_yscale('log')
-
-ax[0, 1].legend()
+        markerfacecolor='k', markeredgewidth=.5, markeredgecolor='w')
 
 #%% Plot 1D σ vs SBR
 
@@ -131,14 +117,30 @@ plt.tight_layout()
 
 #%% Plot 1D σ vs fov
 
-ax[1, 1].plot(fov_array, σ_CRB_fov['L50']) 
-ax[1, 1].plot(fov_array, σ_CRB_fov['L100']) 
-ax[1, 1].plot(fov_array, σ_CRB_fov['L150']) 
+ax[0, 1].plot(fov_array, σ_CRB_fov['L50'], label='L = 50 nm') 
+ax[0, 1].plot(fov_array, σ_CRB_fov['L100'], label='L = 100 nm') 
+ax[0, 1].plot(fov_array, σ_CRB_fov['L150'], label='L = 150 nm') 
 
-ax[1, 1].set_xlabel('FOV (nm)')
-ax[1, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[0, 1].set_xlabel('FOV (nm)')
+ax[0, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
 
-ax[1, 1].set_xscale('linear')
-ax[1, 1].set_yscale('linear')
+ax[0, 1].set_xscale('linear')
+ax[0, 1].set_yscale('linear')
+
+ax[0, 1].legend(fontsize=8)
+
 
 plt.tight_layout()
+
+#%% Plot 1D σ vs N
+
+ax[1, 1].plot(N_array, σ_CRB_N['L50']) 
+ax[1, 1].plot(N_array, σ_CRB_N['L100']) 
+ax[1, 1].plot(N_array, σ_CRB_N['L150']) 
+
+ax[1, 1].set_xlabel('N')
+ax[1, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
+
+ax[1, 1].set_xscale('log')
+ax[1, 1].set_yscale('log')
+

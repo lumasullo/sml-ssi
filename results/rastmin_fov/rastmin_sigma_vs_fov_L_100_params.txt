@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-20 12:35:47.328509
+n = 500
+sbr = 10
+l (nm) = 100
+fov (nm) = 300.0
+k = 16
+fwhm (nm) = 250
+size (nm) = 400
+step (nm) = 1
+psf_type = doughnut
+central excitation = True
+file name = /rastmin_sigma_vs_fov_L_100
+

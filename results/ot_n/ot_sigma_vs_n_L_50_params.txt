@@ -1,0 +1,13 @@
+[params]
+date and time = 2021-05-17 15:41:35.549012
+n = variable
+sbr = 10
+l (nm) = 50
+fov (nm) = 37.5
+k = 100
+fwhm (nm) = 50
+size (nm) = 100
+psf_type = gaussian
+central excitation = False
+file name = /ot_sigma_vs_n_L_50
+

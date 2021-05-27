@@ -19,20 +19,23 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'OT'
+method = 'smct'
+#method = 'OT'
+#method = 'minsted'
 psf_type = 'gaussian'
 center_value = False
 N = 500 # detected photons
 SBR = 10 # Signal to Background Ratio
-L = 150 # distance between beam centers
-fwhm = 250 # fwhm of the psf
-size_nm = 500 # field of view size (nm)
+L = 50 # distance between beam centers
+fwhm = 50 # fwhm of the psf
+size_nm = 350 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
 fov = 'variable'
 
-K = 100
+#K = 100
+K = 6
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -46,7 +49,7 @@ fov_array = np.linspace(10, 300, num=500)
 
 σ_CRB_array = np.zeros((len(fov_array), size, size))
 
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0)
+pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='orbit')
 
 psf = np.zeros((K, size, size)) # array of sequential illuminations
     
@@ -59,11 +62,14 @@ for i in range(K):
  
 #%% Calculate CRB and plot
     
-σ_CRB, Σ_CRB, Fr = tools.crb(K, psf, SBR, step_nm, size_nm, N, prior='rough loc')
+σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N, 
+                                      prior='rough loc')
 
 
 fig, ax = plt.subplots()
-fig.suptitle('MINFLUX CRB')
+#fig.suptitle('OT CRB')
+fig.suptitle('SMCT CRB')
+
 
 crbfig = ax.imshow(σ_CRB, interpolation=None, 
                    extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
@@ -94,6 +100,8 @@ av_σ_array = np.zeros(len(fov_array))
 
 for i, fov in enumerate(fov_array):
     
+    print(i)
+
     mask = tools.create_circular_mask(size, size, center=None, radius=fov/2)
     σ_CRB_cropped = σ_CRB[mask]
     av_σ = np.mean(σ_CRB_cropped)
@@ -108,7 +116,9 @@ ax.set_ylabel('average σ_CRB (nm)')
 #%% Save results
 
 path = os.getcwd()
-filename = r'/ot_sigma_vs_fov_L_' + str(L)
+#filename = r'/ot_sigma_vs_fov_L_' + str(L)
+filename = r'/smct_sigma_vs_fov_L_' + str(L)
+
 folder = r'/results'
 np.save(path + folder + filename + '_av_sigma_array.npy', av_σ_array)
 np.save(path + folder + filename + '_fov_array' + '.npy', fov_array)
@@ -125,6 +135,7 @@ config['params'] = {
 'K': K,
 'fwhm (nm)': fwhm,
 'size (nm)': size_nm,
+'px (nm)': step_nm,
 'psf_type': psf_type,
 'central excitation': center_value,
 'file name': filename}

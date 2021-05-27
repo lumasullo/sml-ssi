@@ -19,22 +19,24 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'OT'
-#method = 'minsted'
+#method = 'smct'
+#method = 'OT'
+method = 'minsted'
 psf_type = 'gaussian'
 center_value = False
 N = 500 # detected photons
 SBR = 10 # Signal to Background Ratio
-L = 300 # ditance between beam centers
+L = 50 # ditance between beam centers
 #L = 100
 fov = .75*L # fov for the average σ_CRB
-fwhm = 300 # fwhm of the psf
+fwhm = 50 # fwhm of the psf
 #fwhm = 100
 size_nm = 300 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
 K = 100
+#K = 6
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -57,7 +59,8 @@ for i in range(K):
     
 #%% Calculate CRB and plot
 
-σ_CRB, Σ_CRB, Fr = tools.crb(K, psf, SBR, step_nm, size_nm, N, prior='rough loc')
+σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N, 
+                                      prior='rough loc')
 
 fig, ax = plt.subplots()
 fig.suptitle(method + ' CRB')
@@ -92,8 +95,9 @@ print('Average precision is', np.around(av_sigma, 2), ' nm')
 #%% Save results
 
 path = os.getcwd()
-filename = r'/ot_crb'
-#filename = r'/minsted_crb'
+#filename = r'/smct_crb'
+#filename = r'/ot_crb'
+filename = r'/minsted_crb'
 folder = r'/Results'
 np.save(path + folder + filename + '_σ_CRB', σ_CRB)
 
@@ -109,6 +113,7 @@ config['params'] = {
 'K': K,
 'fwhm (nm)': fwhm,
 'size (nm)': size_nm,
+'px (nm)': step_nm,
 'psf_type': psf_type,
 'central excitation': center_value,
 'file name': filename}

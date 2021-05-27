@@ -19,19 +19,19 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'MINFLUX'
+method = 'RASTMIN'
 psf_type = 'doughnut'
 center_value = True
 N = 500 # detected photons
 SBR = 10 # Signal to Background Ratio
-L = 100 # ditance between beam centers
+L = 100 # characteristic distance 
 fov = .75*L # fov for the average σ_CRB
 fwhm = 250 # fwhm of the psf
 size_nm = 300 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-K = 4
+K = 16
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -41,7 +41,7 @@ y = np.arange(-size/2, size/2)
 Mx, My = np.meshgrid(x, y)
 Mr = np.sqrt(Mx**2 + My**2)
 
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='orbit')
+pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='raster scan')
 
 psf = np.zeros((K, size, size)) # array of sequential illuminations
 
@@ -54,7 +54,7 @@ for i in range(K):
     
 #%% Calculate CRB and plot
 
-σ_CRB, Σ_CRB, Fr = tools.crb(K, psf, SBR, step_nm, size_nm, N)
+σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N, prior=None)
 
 fig, ax = plt.subplots()
 fig.suptitle(method + ' CRB')
@@ -86,10 +86,23 @@ av_sigma = np.mean(σ_CRB_cropped)
 
 print('Average precision is', np.around(av_sigma, 2), ' nm')
 
+fig, ax = plt.subplots()
+sbrfig = ax.imshow(SBR*sbr_rel, interpolation=None, 
+                   extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
+                   cmap='plasma', vmin=None, vmax=None)
+
+ax.set_ylabel('y (nm)')
+ax.set_xlabel('x (nm)')
+ax.set_xlim(-size_nm/2, size_nm/2)
+ax.set_ylim(-size_nm/2, size_nm/2)
+
+cbar = fig.colorbar(sbrfig, ax=ax)
+cbar.ax.set_ylabel('$sbr_{rel}$')
+
 #%% Save results
 
 path = os.getcwd()
-filename = r'/minflux_crb'
+filename = r'/rastmin_crb'
 folder = r'/Results'
 np.save(path + folder + filename + '_σ_CRB', σ_CRB)
 

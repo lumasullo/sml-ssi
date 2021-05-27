@@ -19,19 +19,19 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'MINFLUX'
+method = 'RASTMIN'
 psf_type = 'doughnut'
 center_value = True
-SBR_array = np.linspace(0.5, 30, num=200) # Signal to Background Ratio
+SBR_array = np.logspace(-0.3, 1.47, num=25) # Signal to Background Ratio
 N = 500
 L = 150 # distance between beam centers
 fwhm = 250 # fwhm of the psf
 fov = 0.75*L # fov for the average σ_CRB
-size_nm = 100 # field of view size (nm)
+size_nm = 2*L # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-K = 4
+K = 16
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -43,7 +43,7 @@ Mr = np.sqrt(Mx**2 + My**2)
 
 av_σ_array = np.zeros(len(SBR_array))
 
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0)
+pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='raster scan')
 
 psf = np.zeros((K, size, size)) # array of sequential illuminations
 
@@ -58,7 +58,9 @@ for i in range(K):
 
 for i, SBR in enumerate(SBR_array):
 
-    σ_CRB, Σ_CRB, Fr = tools.crb(K, psf, SBR, step_nm, size_nm, N)
+    print(i)
+    
+    σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N)
     
     mask = tools.create_circular_mask(size, size, center=None, radius=fov/2)
     σ_CRB_cropped = σ_CRB[mask]
@@ -74,7 +76,7 @@ ax.set_ylabel('average σ_CRB (nm)')
 #%% Save results
 
 path = os.getcwd()
-filename = r'/minflux_sigma_vs_sbr_L_' + str(L)
+filename = r'/rastmin_sigma_vs_sbr_L_' + str(L)
 folder = r'/results'
 np.save(path + folder + filename + '_av_sigma_array.npy', av_σ_array)
 np.save(path + folder + filename + '_sbr_array' + '.npy', SBR_array)
@@ -93,6 +95,7 @@ config['params'] = {
 'K': K,
 'fwhm (nm)': fwhm,
 'size (nm)': size_nm,
+'px (nm)': step_nm,
 'psf_type': psf_type,
 'central excitation': center_value,
 'file name': filename}

@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-05-22 15:13:56.855575
+n = 500
+sbr = 10
+l (nm) = 50
+fov (nm) = 37.5
+k = 100
+fwhm (nm) = 50
+size (nm) = 300
+px (nm) = 1
+psf_type = gaussian
+central excitation = False
+file name = /minsted_crb
+

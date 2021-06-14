@@ -25,6 +25,7 @@ method = 'smct'
 psf_type = 'gaussian'
 center_value = False
 SBR_array = np.logspace(-0.3, 1.47, num=25) # Signal to Background Ratio
+SBR_array = np.append(SBR_array, [5, 10, 100000])
 N = 500
 L = 300 # distance between beam centers
 fwhm = 300 # fwhm of the psf
@@ -73,9 +74,13 @@ for i, SBR in enumerate(SBR_array):
     
 fig, ax = plt.subplots()
 
-ax.plot(SBR_array, av_σ_array)
+ax.plot(SBR_array[:-3], av_σ_array[:-3])
 ax.set_xlabel('SBR')
 ax.set_ylabel('average σ_CRB (nm)')
+
+sbr_efficiency = [av_σ_array[-1]/av_σ_array[-3], av_σ_array[-1]/av_σ_array[-2]]
+
+print(sbr_efficiency)
 
 #%% Save results
 

@@ -22,10 +22,10 @@ plt.close('all')
 method = 'RASTMIN'
 psf_type = 'gaussian'
 center_value = False
-N = 30000 # detected photons
-SBR = 1 # Signal to Background Ratio
+N = 500 # detected photons
+SBR = 10 # Signal to Background Ratio
 L = 600 # characteristic distance 
-K = 81
+K = 16
 fov = .75*L # fov for the average σ_CRB
 fwhm = 300 # fwhm of the psf
 size_nm = 200 # field of view size (nm)
@@ -94,7 +94,7 @@ print('2D error is', np.sqrt((1/2)*np.mean(err_array[:, 0]**2+err_array[:, 1]**2
 
 fig, ax = plt.subplots()
 
-nplot = ax.imshow(n_array.reshape(9, 9), interpolation='None', cmap='gray',
+nplot = ax.imshow(n_array.reshape(10, 10), interpolation='None', cmap='gray',
                   extent=[-L/2, L/2, -L/2, L/2])
 
 cbar = fig.colorbar(nplot, ax=ax)
@@ -105,7 +105,7 @@ ax.set_ylabel('y (nm)')
 
 fig, ax = plt.subplots()
 
-λplot = ax.imshow(λ.reshape(9, 9), interpolation='None', cmap='gray',
+λplot = ax.imshow(λ.reshape(10, 10), interpolation='None', cmap='gray',
                   extent=[-L/2, L/2, -L/2, L/2])
 
 cbar = fig.colorbar(λplot, ax=ax)
@@ -124,9 +124,9 @@ fig, ax = plt.subplots()
 
 x = L/np.sqrt(K) * np.arange(np.sqrt(K))
 
-ax.plot(x, n_array.reshape(9, 9)[5, :], '-s', label='Data')
-ax.plot(x, λ.reshape(9, 9)[5, :], label='λ (ground truth)')
-ax.plot(x, λmle.reshape(9, 9)[5, :], label='$λ_{MLE}$')
+ax.plot(x, n_array.reshape(10, 10)[5, :], '-s', label='Data')
+ax.plot(x, λ.reshape(10, 10)[5, :], label='λ (ground truth)')
+ax.plot(x, λmle.reshape(10, 10)[5, :], label='$λ_{MLE}$')
 
 ax.legend()
 
@@ -137,9 +137,9 @@ fig, ax = plt.subplots()
 
 x = L/np.sqrt(K) * np.arange(np.sqrt(K))
 
-ax.plot(x, n_array.reshape(9, 9)[:, 5], '-s', label='Data')
-ax.plot(x, λ.reshape(9, 9)[:, 5], label='λ (ground truth)')
-ax.plot(x, λmle.reshape(9, 9)[:, 5], label='$λ_{MLE}$')
+ax.plot(x, n_array.reshape(10, 10)[:, 5], '-s', label='Data')
+ax.plot(x, λ.reshape(10, 10)[:, 5], label='λ (ground truth)')
+ax.plot(x, λmle.reshape(10, 10)[:, 5], label='$λ_{MLE}$')
 
 ax.legend()
 

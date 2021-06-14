@@ -23,15 +23,15 @@ method = 'OT_min'
 psf_type = 'doughnut'
 center_value = False
 N = 500 # detected photons
-SBR = 10 # Signal to Background Ratio
+SBR = 5 # Signal to Background Ratio
 L = 100 # ditance between beam centers
 fov = .75*L # fov for the average σ_CRB
-fwhm = 250 # fwhm of the psf
+fwhm = 300 # fwhm of the psf
 size_nm = 300 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-K = 100
+K = 10
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -54,7 +54,7 @@ for i in range(K):
     
 #%% Calculate CRB and plot
 
-σ_CRB, Σ_CRB, Fr = tools.crb(K, psf, SBR, step_nm, size_nm, N)
+σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N, prior='rough loc')
 
 fig, ax = plt.subplots()
 fig.suptitle(method + ' CRB')
@@ -85,6 +85,34 @@ mask = tools.create_circular_mask(size, size, radius=fov/2)
 av_sigma = np.mean(σ_CRB_cropped)
 
 print('Average precision is', np.around(av_sigma, 2), ' nm')
+
+#%% Plot  Σ_CRB
+
+from matplotlib.patches import Ellipse
+
+fig, ax = plt.subplots()
+fig.suptitle(method + 'Σ CRB')
+
+ax.set_xlim([-L, L])
+ax.set_ylim([-L, L])
+
+circ = plt.Circle((0,0), radius=L/2, zorder=10, linestyle='--', facecolor='None', edgecolor='k')
+ax.add_patch(circ)
+
+n = 10
+xx = np.arange(-fov/2, fov/2, step=n)
+yy = np.arange(-fov/2, fov/2, step=n)
+
+for x in xx:
+    for y in yy:
+        
+        [i, j] = tools.space_to_index([x, y], size_nm, step_nm)
+        
+        w, h, theta = tools.cov_ellipse(Σ_CRB[:, :, i, j], nsig=1)
+        print('w, h', w, h)
+        
+        ellipse = Ellipse((x, y), w, h, theta, color='k', fill=False)
+        ax.add_patch(ellipse)
 
 #%% Save results
 

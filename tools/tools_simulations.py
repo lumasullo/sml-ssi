@@ -8,6 +8,7 @@ Different tools used for MINFLUX exp analysis and simulations
 
 """
 import numpy as np
+import scipy.stats as stats
 
 π = np.pi
 
@@ -31,6 +32,45 @@ def index_to_space(index, size_nm, px_nm):
     space[1] = size_nm/2 - index[0]*px_nm
 
     return np.array(space)
+
+def cov_ellipse(cov, q=None, nsig=None, **kwargs):
+    
+    """
+    Plot of covariance ellipse
+    
+    Parameters
+    ----------
+    cov : (2, 2) array
+        Covariance matrix.
+    q : float, optional
+        Confidence level, should be in (0, 1)
+    nsig : int, optional
+        Confidence level in unit of standard deviations. 
+        E.g. 1 stands for 68.3% and 2 stands for 95.4%.
+
+    Returns
+    -------
+    width(w), height(h), rotation(theta in degrees):
+         The lengths of two axises and the rotation angle in degree
+    for the ellipse.
+    """
+    
+    if q is not None:
+        q = np.asarray(q)
+    elif nsig is not None:
+        q = 2 * stats.norm.cdf(nsig) - 1
+    else:
+        raise ValueError('Either `q` and `nsig` should be specified.')
+    
+    val, vec =  np.linalg.eig(cov)
+    order = val.argsort()[::]
+    val = val[order]
+    vec = vec[order]
+    w, h = 2 * np.sqrt(val[:, None])
+
+    theta = np.degrees(np.arctan2(*vec[::, 0]))
+    
+    return w, h, theta
 
 
 def create_circular_mask(h, w, center=None, radius=None):
@@ -100,7 +140,7 @@ def psf(central_zero, size, px, fwhm, psf_type):
     return result
 
  
-def ebp_centres(K, L, center, phi=0, arr_type='orbit'):
+def ebp_centres(K, L, center, arr_type, phi=0):
     
     """   
     Calculates doughnut centre positions of the excitation pattern.
@@ -175,7 +215,7 @@ def ebp_centres(K, L, center, phi=0, arr_type='orbit'):
     return pos_nm  
 
 
-def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, DEBUG=False):
+def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, localizations=1, DEBUG=False):
     
     """
     
@@ -251,9 +291,19 @@ def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, DEBUG=False):
         p[i] = (λ[i] + λb/K)/ normλ
 
 #    print('p.sum()',p.sum())
+        
+    if localizations != 1:    
+        
+        n_array = np.zeros((localizations, K))
+        
+        for i in range(localizations):
                     
-    n_array = np.random.multinomial(N, p)
-    
+            n_array[i, :] = np.random.multinomial(N, p)
+        
+    else:
+        
+        n_array = np.random.multinomial(N, p)
+        
     return n_array
 
 
@@ -485,7 +535,8 @@ def crb_camera(K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
 
 
      
-def mle(n, PSF, SBR, px_nm=1, prior=None, s=None, DEBUG=False):
+def mle(n, psf, sbr, px_nm=1, prior=None, s=None, localizations=1, 
+        DEBUG=False):
     
     """    
     Position estimator (using MLE)
@@ -509,61 +560,126 @@ def mle(n, PSF, SBR, px_nm=1, prior=None, s=None, DEBUG=False):
     px_nm : grid px in nm
         
     """
+    
+    #TO DO: fix for px_nm != 1
        
     # number of beams in EBP
-    K = np.shape(PSF)[0]
+    K = np.shape(psf)[0]
     
     # FOV size
-    size = np.shape(PSF)[1] 
+    size = np.shape(psf)[1] 
     
-    normPSF = np.sum(PSF, axis = 0)
+    # normalization term, sum of all psf intensities
+    norm_psf = np.sum(psf, axis = 0)
+
+    # sbr(x, y) is computed as SBR(x, y), i.e. proportional to rel_sbr(x, y) 
+    # instead of a constant
+    sbr_rel = np.sum(psf, axis=0)/np.sum(psf, axis=0)[int(size/2), int(size/2)]
+    sbr = sbr_rel * sbr
     
     # p-parameter vector 
     p = np.zeros((K, size, size))
-
+    
     for i in np.arange(K):        
-        p[i,:,:] = (SBR/(SBR + 1)) * PSF[i,:,:]/normPSF + (1/(SBR + 1)) * (1/K)
+        p[i,:,:] = sbr/(sbr + 1) * psf[i,:,:]/norm_psf + (1/(sbr + 1)) * (1/K)
+    
+    if localizations != 1:
         
-    # log-likelihood function
-    l_aux = np.zeros((K, size, size))
-    for i in np.arange(K):
-        l_aux[i, :, :] = n[i] * np.log(p[i, : , :])
+        mle_index = np.zeros((localizations, 2))
+        mle_nm = np.zeros((localizations, 2))
+        likelihood = np.zeros((localizations, size, size))
         
-    likelihood = np.sum(l_aux, axis = 0)
-        
-    if prior == 'r<s':
+        for i in range(localizations):
+            
+            print('localization ' + str(i))
+            
+            # log-likelihood function
+            l_aux = np.zeros((K, size, size))
+            for k in range(K):
+                l_aux[k, :, :] = n[i, k] * np.log(p[k, : , :])
                 
-        x = np.arange(-size/2, size/2)
-        y = np.arange(-size/2, size/2)
+            likelihood[i, :, :] = np.sum(l_aux, axis=0)
+            
+            if prior == 'r<s':
+                    
+                x = np.arange(-size/2, size/2)
+                y = np.arange(-size/2, size/2)
+                
+                Mx, My = np.meshgrid(x, y)
+                Mr = np.sqrt(Mx**2 + My**2)
+                
+                likelihood[i, :, :][Mr>s/2] = -np.inf
+            
+            elif prior == 'rough loc':
+            
+                #TODO: generalize for px values different to 1 nm
+                                
+                x = np.arange(-size/2, size/2) * px_nm
+                y = np.arange(-size/2, size/2) * px_nm
+                
+                xx, yy = np.meshgrid(x, y)
+                                
+                # log of 2D gaussian function
+                prior_info = -(xx**2)/(2*s**2)-(yy**2)/(2*s**2)
+                
+                likelihood[i, :, :] = likelihood[i, :, :] + prior_info
+                    
+            else:
+            
+                pass
+            
+                    # maximum likelihood estimator for the position   
         
-        Mx, My = np.meshgrid(x, y)
-        Mr = np.sqrt(Mx**2 + My**2)
+            mle_index[i, :] = np.unravel_index(np.argmax(likelihood[i, :, :], 
+                                               axis=None), 
+                                               likelihood[i, :, :].shape)
         
-        likelihood[Mr>s/2] = -np.inf
-        
-    elif prior == 'rough loc':
-        
-        #TODO: generalize for px values different to 1 nm
-                        
-        x = np.arange(-size/2, size/2)
-        y = np.arange(-size/2, size/2)
-        
-        xx, yy = np.meshgrid(x, y)
-                        
-        G = np.exp(-(xx**2)/(s**2)-(yy**2)/(s**2))
-        
-        likelihood = likelihood + np.log(G)
+            mle_nm[i, :] = index_to_space(mle_index[i, :], size * px_nm, px_nm)
         
     else:
+    
+        # log-likelihood function
+        l_aux = np.zeros((K, size, size))
+        for i in range(K):
+            l_aux[i, :, :] = n[i] * np.log(p[i, : , :])
+            
+        likelihood = np.sum(l_aux, axis=0)
+            
+        if prior == 'r<s':
+                    
+            x = np.arange(-size/2, size/2)
+            y = np.arange(-size/2, size/2)
+            
+            Mx, My = np.meshgrid(x, y)
+            Mr = np.sqrt(Mx**2 + My**2)
+            
+            likelihood[Mr>s/2] = -np.inf
+            
+        elif prior == 'rough loc':
+            
+            #TODO: generalize for px values different to 1 nm
+                            
+            x = np.arange(-size/2, size/2) * px_nm
+            y = np.arange(-size/2, size/2) * px_nm
+            
+            xx, yy = np.meshgrid(x, y)
+                            
+            # log of 2D gaussian function
+            prior_info = -(xx**2)/(2*s**2)-(yy**2)/(2*s**2)
+            
+            likelihood = likelihood + prior_info
+                    
+        else:
+            
+            pass
+                             
+        # maximum likelihood estimator for the position   
         
-        pass
-                         
-    # maximum likelihood estimator for the position   
+        mle_index = np.unravel_index(np.argmax(likelihood, axis=None), 
+                                     likelihood.shape)
+        
+        mle_nm = index_to_space(mle_index, size * px_nm, px_nm)
     
-    mle_index = np.unravel_index(np.argmax(likelihood, axis=None), 
-                                 likelihood.shape)
-    
-    mle_nm = index_to_space(mle_index, size, px_nm)
     
     if DEBUG:
         
@@ -633,5 +749,87 @@ def mle_camera(n, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
     mle_nm = index_to_space(mle_index, size, dx_nm)
 
     return mle_nm
-            
+
+
+#def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, DEBUG=False):
+#    
+#    """
+#    
+#    This function generates a simulated measurement of an ssi-sml experiment.
+#    
+#    Input:
+#    
+#    - psf: np.array (float)
+#    
+#        Stack of K PSFs of the minflux experiment
+#    
+#    - r0: np.array (float)
+#    
+#        2D position of the emitter (x, y)
+#        
+#    - N: int
+#        
+#        Number of total detected photons
+#        
+#    - SBR: int
+#    
+#        Signal to background ratio
+#        
+#    Output:
+#        
+#    - n_array: np.array (int)
+#    
+#        Array of measured photons at each exposition
+#    
+#    """
+#    
+#    r0 = space_to_index(r0_nm, size_nm, px_nm)
+#
+#    K = np.shape(psf)[0] # number of expositions
+#        
+#    λ = np.zeros(K)
+#    λb = np.zeros(K)
+#    
+#    for i in range(K):
+#        
+#        λ[i] = N*(SBR/(SBR+1)) * (psf[i, r0[0], r0[1]]/np.sum(psf, axis=0))[r0[0], r0[1]]
+#        
+#        print('λ[i]', λ[i])
+#        
+#    print('np.sum(λ)', np.sum(λ))
+#    
+#    #TODO: fix analog to CRB
+#    
+##    import matplotlib.pyplot as plt
+##    
+##    plt.figure()
+##    plt.imshow(λ.reshape(9, 9))
+#        
+#    # backgroung given a SBR level
+#    λb = np.mean(λ)/(SBR/K)
+#    
+##    for i in range(K):
+##    
+##        λb[i] = λ[i]/SBR
+##        print('λb[i]', λb[i])
+#    
+#    print('λb', λb)
+#    print('np.sum(λb)', np.sum(λb))
+#
+#    normλ = np.sum(λ) + λb
+#    
+#    # p-parameter for each beam
+#    
+#    p = np.zeros(K)
+#    
+#    for i in range(K):
+#        
+#        p[i] = (λ[i] + λb/K)/ normλ
+#
+##    print('p.sum()',p.sum())
+#                    
+#    n_array = np.random.multinomial(N, p)
+#    
+#    return n_array
+#            
     

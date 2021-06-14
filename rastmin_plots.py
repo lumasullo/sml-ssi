@@ -51,6 +51,8 @@ crb_map = np.load('rastmin_crb_σ_CRB.npy')
 
 fig, ax = plt.subplots(2, 2)
 
+fig.set_size_inches(6, 4.5)
+
 #%% Plot CRB 2D map
 
 config = configparser.ConfigParser()
@@ -75,8 +77,8 @@ else:
 pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='raster scan')
 
 size_nm = 300
-vmin = 1.8
-vmax = 12
+vmin = 1.5
+vmax = 15
 
 crbplot = ax[0,0].imshow(crb_map, interpolation=None, extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
                          cmap=cmaps.parula, vmin=vmin, vmax=vmax)
@@ -89,6 +91,8 @@ ax[0,0].set_ylim(-size_nm/4, size_nm/4)
 
 cbar = fig.colorbar(crbplot, ax=ax[0,0])
 cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
+
+cbar.set_ticks([5, 10, 15])
 
 circ = plt.Circle((0,0), radius=L/2, zorder=10, linestyle='--', facecolor='None', edgecolor='k')
 ax[0,0].add_patch(circ)
@@ -111,7 +115,7 @@ ax[0, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
 ax[0, 1].set_xscale('linear')
 ax[0, 1].set_yscale('linear')
 
-ax[0, 1].legend(fontsize=8)
+ax[0, 1].legend(fontsize=9)
 
 #%% Plot 1D σ vs SBR
 
@@ -125,15 +129,18 @@ ax[1, 0].set_ylabel('$<σ_{CRB}>$ (nm)')
 ax[1, 0].set_xscale('log')
 ax[1, 0].set_yscale('log')
 
+ax[1, 0].set_ylim([0.9, 11])
 
-for axis in [ax[1, 0].xaxis, ax[1, 0].yaxis]:
-    axis.set_major_formatter(ScalarFormatter())
+
+#for axis in [ax[1, 0].xaxis, ax[1, 0].yaxis]:
+#for axis in [ax[1, 0].yaxis]:
+#    axis.set_major_formatter(ScalarFormatter())
 
 
 #ax[1, 0].set_xticks([], minor=True)
-ax[1, 0].set_xticks([1, 2, 3, 5, 10, 20])
+#ax[1, 0].set_xticks([1, 2, 3, 5, 10, 20])
 #ax[1, 0].set_yticks([], minor=True)
-ax[1, 0].set_yticks([1, 2, 3, 5, 7, 10])
+#ax[1, 0].set_yticks([1, 2, 3, 5, 7, 10])
 
 
 #%% Plot 1D σ vs N
@@ -142,20 +149,25 @@ ax[1, 1].plot(N_array, σ_CRB_N['L50'])
 ax[1, 1].plot(N_array, σ_CRB_N['L100']) 
 ax[1, 1].plot(N_array, σ_CRB_N['L150']) 
 
-for axis in [ax[1, 1].xaxis, ax[1, 1].yaxis]:
-    axis.set_major_formatter(ScalarFormatter())
-    
-#ax[1, 0].set_yticks([], minor=True)
-ax[1, 1].set_yticks([1, 2, 3, 5, 7, 10])
-
-#ax[1, 0].set_xticks([], minor=True)
-ax[1, 1].set_xticks([20, 100, 1000])
-
 ax[1, 1].set_xlabel('N')
 ax[1, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
 
 ax[1, 1].set_xscale('log')
 ax[1, 1].set_yscale('log')
+
+#for axis in [ax[1, 1].xaxis, ax[1, 1].yaxis]:
+#for axis in [ax[1, 1].yaxis]:
+#    axis.set_major_formatter(ScalarFormatter())
+    
+#ax[1, 1].set_yticks([], minor=True)
+#ax[1, 1].set_yticks([1, 2, 3, 5, 7, 10])
+#ax[1, 1].set_yticks([1, 2, 4, 7, 14])
+
+
+#ax[1, 0].set_xticks([], minor=True)
+#ax[1, 1].set_xticks([20, 100, 1000])
+
+
 
 #%% add subfigures labels
 
@@ -163,9 +175,8 @@ ax[1, 1].set_yscale('log')
 #
 #for n, a in enumerate(ax.flat):
 #
-#    a.text(-0.2, 1.1, string.ascii_uppercase[n], transform=a.transAxes, 
+#    a.text(-0.1, 1.1, string.ascii_uppercase[n], transform=a.transAxes, 
 #            size=10, weight='bold')
-
 
 plt.tight_layout()
 

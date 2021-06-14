@@ -23,12 +23,15 @@ method = 'RASTMIN'
 psf_type = 'doughnut'
 center_value = True
 N = 500 # detected photons
-SBR = 10 # Signal to Background Ratio
+SBR = 5 # Signal to Background Ratio
 L = 50 # distance between beam centers
-fwhm = 250 # fwhm of the psf
-size_nm = 350 # field of view size (nm)
+fwhm = 300 # fwhm of the psf
+size_nm = 300 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
+
+fov_array = np.linspace(10, 300, num=200)
+fov_array = np.append(fov_array, [1, 0.75 * L])
 
 fov = 'variable'
 
@@ -41,8 +44,6 @@ y = np.arange(-size/2, size/2)
 
 Mx, My = np.meshgrid(x, y)
 Mr = np.sqrt(Mx**2 + My**2)
-
-fov_array = np.linspace(10, 300, num=200)
 
 σ_CRB_array = np.zeros((len(fov_array), size, size))
 
@@ -75,7 +76,6 @@ ax.set_xlabel('x (nm)')
 ax.set_xlim(-size_nm/2, size_nm/2)
 ax.set_ylim(-size_nm/2, size_nm/2)
 
-
 cbar = fig.colorbar(crbfig, ax=ax)
 cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
 
@@ -102,7 +102,7 @@ for i, fov in enumerate(fov_array):
     
 fig, ax = plt.subplots()
 
-ax.plot(fov_array, av_σ_array)
+ax.plot(fov_array[:-2], av_σ_array[:-2])
 ax.set_xlabel('fov diameter (nm)')
 ax.set_ylabel('average σ_CRB (nm)')
 

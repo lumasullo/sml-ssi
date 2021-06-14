@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 
 plt.close('all')
 
-fwhm = 250 # fwhm of the psf
+fwhm = 300 # fwhm of the psf
 size_nm = 1200 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
@@ -60,3 +60,16 @@ im = io.imread('AVG_PSF.tif')
 imarray = np.array(im)
 psf_exp = imarray.astype(float)
 
+#%% 2 PSFs
+
+#doughnut_psf0 = tools.psf(np.array([10, 40]), size_nm, step_nm, fwhm, psf_type='doughnut')
+#doughnut_psf1 = tools.psf(np.array([80, 10]), size_nm, step_nm, fwhm, psf_type='doughnut')
+#
+#mixed_psf = doughnut_psf0 + doughnut_psf1 
+#
+#plt.figure()
+#plt.imshow(mixed_psf, extent=extent, interpolation='None', 
+#           cmap=cmaps.parula)
+#
+#plt.figure()
+#plt.plot(mixed_psf[int(size/2), :])

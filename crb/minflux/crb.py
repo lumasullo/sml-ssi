@@ -24,7 +24,7 @@ psf_type = 'doughnut'
 center_value = True
 N = 500 # detected photons
 SBR = 5 # Signal to Background Ratio
-L = 100 # ditance between beam centers
+L = 50 # ditance between beam centers
 fov = .75*L # fov for the average σ_CRB
 fwhm = 300 # fwhm of the psf
 size_nm = 300 # field of view size (nm)
@@ -54,7 +54,7 @@ for i in range(K):
     
 #%% Calculate CRB and plot
 
-σ_CRB, Σ_CRB, Fr = tools.crb(K, psf, SBR, step_nm, size_nm, N)
+σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N)
 
 fig, ax = plt.subplots()
 fig.suptitle(method + ' CRB')

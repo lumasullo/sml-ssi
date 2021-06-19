@@ -1,7 +1,7 @@
 [params]
-date and time = 2021-05-20 14:34:40.438560
+date and time = 2021-06-17 15:09:07.918455
 n = variable
-sbr = 10
+sbr = 5
 l (nm) = 50
 fov (nm) = 37.5
 k = 6

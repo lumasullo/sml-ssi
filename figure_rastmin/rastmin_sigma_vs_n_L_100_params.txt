@@ -1,12 +1,12 @@
 [params]
-date and time = 2021-05-20 12:25:33.638314
+date and time = 2021-06-18 17:22:13.160223
 n = variable
-sbr = 10
+sbr = 5
 l (nm) = 100
 fov (nm) = 75.0
 k = 16
-fwhm (nm) = 250
-size (nm) = 200
+fwhm (nm) = 300
+size (nm) = 120.0
 px (nm) = 1
 psf_type = doughnut
 central excitation = True

@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-06-18 20:55:10.688075
+n = 500
+sbr = variable
+l (nm) = 300
+fov (nm) = 225.0
+k = 16
+fwhm (nm) = 300
+size (nm) = 360.0
+px (nm) = 1
+psf_type = gaussian
+central excitation = True
+file name = /rastmax_sigma_vs_sbr_L_300
+

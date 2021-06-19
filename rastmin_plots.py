@@ -26,32 +26,27 @@ N_array = np.load('rastmin_sigma_vs_n_L_50_N_array.npy')
 σ_CRB_N = dict()
 σ_CRB_N['L50'] = np.load('rastmin_sigma_vs_n_L_50_av_sigma_array.npy')
 σ_CRB_N['L100'] = np.load('rastmin_sigma_vs_n_L_100_av_sigma_array.npy')
-#σ_CRB_N['L120'] =
 σ_CRB_N['L150'] = np.load('rastmin_sigma_vs_n_L_150_av_sigma_array.npy')
 
-sbr_array = np.load('rastmin_sigma_vs_sbr_L_50_sbr_array.npy')
+sbr_array = np.load('rastmin_sigma_vs_sbr_L_50_sbr_array.npy')[:-3]
 
 σ_CRB_sbr = dict()
-σ_CRB_sbr['L50'] = np.load('rastmin_sigma_vs_sbr_L_50_av_sigma_array.npy')
-σ_CRB_sbr['L100'] = np.load('rastmin_sigma_vs_sbr_L_100_av_sigma_array.npy')
-#σ_CRB_sbr['L120'] =
-σ_CRB_sbr['L150'] = np.load('rastmin_sigma_vs_sbr_L_150_av_sigma_array.npy')
+σ_CRB_sbr['L50'] = np.load('rastmin_sigma_vs_sbr_L_50_av_sigma_array.npy')[:-3]
+σ_CRB_sbr['L100'] = np.load('rastmin_sigma_vs_sbr_L_100_av_sigma_array.npy')[:-3]
+σ_CRB_sbr['L150'] = np.load('rastmin_sigma_vs_sbr_L_150_av_sigma_array.npy')[:-3]
 
-fov_array = np.load('rastmin_sigma_vs_fov_L_50_fov_array.npy')
+fov_array = np.load('rastmin_sigma_vs_fov_L_50_fov_array.npy')[:-2]
 
 σ_CRB_fov = dict()
-σ_CRB_fov['L50'] = np.load('rastmin_sigma_vs_fov_L_50_av_sigma_array.npy')
-σ_CRB_fov['L100'] = np.load('rastmin_sigma_vs_fov_L_100_av_sigma_array.npy')
-#σ_CRB_sbr['L120'] =
-σ_CRB_fov['L150'] = np.load('rastmin_sigma_vs_fov_L_150_av_sigma_array.npy')
+σ_CRB_fov['L50'] = np.load('rastmin_sigma_vs_fov_L_50_av_sigma_array.npy')[:-2]
+σ_CRB_fov['L100'] = np.load('rastmin_sigma_vs_fov_L_100_av_sigma_array.npy')[:-2]
+σ_CRB_fov['L150'] = np.load('rastmin_sigma_vs_fov_L_150_av_sigma_array.npy')[:-2]
 
 params_file = 'rastmin_crb_params.txt'
 
 crb_map = np.load('rastmin_crb_σ_CRB.npy')
 
-fig, ax = plt.subplots(2, 2)
-
-fig.set_size_inches(6, 4.5)
+fig, ax = plt.subplots(2, 2, figsize=(6, 4.7))
 
 #%% Plot CRB 2D map
 
@@ -78,7 +73,7 @@ pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='raster sc
 
 size_nm = 300
 vmin = 1.5
-vmax = 15
+vmax = 12
 
 crbplot = ax[0,0].imshow(crb_map, interpolation=None, extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
                          cmap=cmaps.parula, vmin=vmin, vmax=vmax)
@@ -92,7 +87,7 @@ ax[0,0].set_ylim(-size_nm/4, size_nm/4)
 cbar = fig.colorbar(crbplot, ax=ax[0,0])
 cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
 
-cbar.set_ticks([5, 10, 15])
+cbar.set_ticks([2, 4, 6, 8, 10, 12])
 
 circ = plt.Circle((0,0), radius=L/2, zorder=10, linestyle='--', facecolor='None', edgecolor='k')
 ax[0,0].add_patch(circ)
@@ -171,12 +166,22 @@ ax[1, 1].set_yscale('log')
 
 #%% add subfigures labels
 
+#letters = ['a)', 'b)', 'c)', 'd)']
+#for i, ax in enumerate(ax.flatten()):
+#    ax.text(-10, 0, letters[i], 
+#            size=15, weight='bold')
+#
 #import string
 #
-#for n, a in enumerate(ax.flat):
+#for n, a in enumerate(ax.flat[1:]):
 #
-#    a.text(-0.1, 1.1, string.ascii_uppercase[n], transform=a.transAxes, 
+#    a.text(-0.3, 1.2, string.ascii_uppercase[n+1], transform=a.transAxes, 
 #            size=10, weight='bold')
+#    
+#a = ax.flat[0]
+#   
+#a.text(-0.65, 1.2, string.ascii_uppercase[0], transform=a.transAxes, 
+#       size=10, weight='bold')
 
 plt.tight_layout()
 

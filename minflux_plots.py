@@ -28,27 +28,27 @@ N_array = np.load('minflux_sigma_vs_n_L_50_N_array.npy')
 #σ_CRB_N['L120'] =
 σ_CRB_N['L150'] = np.load('minflux_sigma_vs_n_L_150_av_sigma_array.npy')
 
-sbr_array = np.load('minflux_sigma_vs_sbr_L_50_sbr_array.npy')
+sbr_array = np.load('minflux_sigma_vs_sbr_L_50_sbr_array.npy')[:-3]
 
 σ_CRB_sbr = dict()
-σ_CRB_sbr['L50'] = np.load('minflux_sigma_vs_sbr_L_50_av_sigma_array.npy')
-σ_CRB_sbr['L100'] = np.load('minflux_sigma_vs_sbr_L_100_av_sigma_array.npy')
+σ_CRB_sbr['L50'] = np.load('minflux_sigma_vs_sbr_L_50_av_sigma_array.npy')[:-3]
+σ_CRB_sbr['L100'] = np.load('minflux_sigma_vs_sbr_L_100_av_sigma_array.npy')[:-3]
 #σ_CRB_sbr['L120'] =
-σ_CRB_sbr['L150'] = np.load('minflux_sigma_vs_sbr_L_150_av_sigma_array.npy')
+σ_CRB_sbr['L150'] = np.load('minflux_sigma_vs_sbr_L_150_av_sigma_array.npy')[:-3]
 
-fov_array = np.load('minflux_sigma_vs_fov_L_50_fov_array.npy')
+fov_array = np.load('minflux_sigma_vs_fov_L_50_fov_array.npy')[:-2]
 
 σ_CRB_fov = dict()
-σ_CRB_fov['L50'] = np.load('minflux_sigma_vs_fov_L_50_av_sigma_array.npy')
-σ_CRB_fov['L100'] = np.load('minflux_sigma_vs_fov_L_100_av_sigma_array.npy')
+σ_CRB_fov['L50'] = np.load('minflux_sigma_vs_fov_L_50_av_sigma_array.npy')[:-2]
+σ_CRB_fov['L100'] = np.load('minflux_sigma_vs_fov_L_100_av_sigma_array.npy')[:-2]
 #σ_CRB_sbr['L120'] =
-σ_CRB_fov['L150'] = np.load('minflux_sigma_vs_fov_L_150_av_sigma_array.npy')
+σ_CRB_fov['L150'] = np.load('minflux_sigma_vs_fov_L_150_av_sigma_array.npy')[:-2]
 
 params_file = 'minflux_crb_params.txt'
 
 crb_map = np.load('minflux_crb_σ_CRB.npy')
 
-fig, ax = plt.subplots(2, 2)
+fig, ax = plt.subplots(2, 2, figsize=(6, 4.7))
 
 #%% Plot CRB 2D map
 
@@ -71,10 +71,10 @@ else:
     
     print('center_value must be True/False')
     
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0)
+pos_nm = tools.ebp_centres(K, L, center=center_value, arr_type='orbit', phi=0)
 
 size_nm = 300
-vmin = 1.8
+vmin = 1.5
 vmax = 12
 
 crbplot = ax[0,0].imshow(crb_map, interpolation=None, extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
@@ -88,6 +88,8 @@ ax[0,0].set_ylim(-size_nm/4, size_nm/4)
 
 cbar = fig.colorbar(crbplot, ax=ax[0,0])
 cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
+
+cbar.set_ticks([2, 4, 6, 8, 10, 12])
 
 circ = plt.Circle((0,0), radius=L/2, zorder=10, linestyle='--', facecolor='None', edgecolor='k')
 ax[0,0].add_patch(circ)
@@ -127,7 +129,7 @@ ax[0, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
 ax[0, 1].set_xscale('linear')
 ax[0, 1].set_yscale('linear')
 
-ax[0, 1].legend(fontsize=8)
+ax[0, 1].legend(fontsize=9)
 
 
 plt.tight_layout()

@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-06-18 16:24:02.124075
+n = 500
+sbr = 10
+l (nm) = 600
+fov (nm) = 450.0
+k = 16
+fwhm (nm) = 300
+size (nm) = 700
+px (nm) = 1
+psf_type = gaussian
+central excitation = True
+file name = /rastmax_crb
+

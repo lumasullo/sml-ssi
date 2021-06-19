@@ -19,15 +19,15 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'C-SMLM'
+method = 'RASTMAX'
 psf_type = 'gaussian'
 center_value = True
-N = 6000 # detected photons
+N = 500 # detected photons
 SBR = 10 # Signal to Background Ratio
 L = 600 # characteristic distance 
 fov = .75*L # fov for the average σ_CRB
-fwhm = 250 # fwhm of the psf
-size_nm = 800 # field of view size (nm)
+fwhm = 300 # fwhm of the psf
+size_nm = 700 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
@@ -41,7 +41,8 @@ y = np.arange(-size/2, size/2)
 Mx, My = np.meshgrid(x, y)
 Mr = np.sqrt(Mx**2 + My**2)
 
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='raster scan')
+pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, 
+                           arr_type='raster scan')
 
 psf = np.zeros((K, size, size)) # array of sequential illuminations
 
@@ -102,7 +103,7 @@ cbar.ax.set_ylabel('$sbr_{rel}$')
 #%% Save results
 
 path = os.getcwd()
-filename = r'/csmlm_crb'
+filename = r'/rastmax_crb'
 folder = r'/Results'
 np.save(path + folder + filename + '_σ_CRB', σ_CRB)
 

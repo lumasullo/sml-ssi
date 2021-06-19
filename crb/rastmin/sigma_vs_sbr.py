@@ -25,10 +25,10 @@ center_value = True
 SBR_array = np.logspace(-0.3, 1.47, num=25) # Signal to Background Ratio
 SBR_array = np.append(SBR_array, [5, 10, 100000])
 N = 500
-L = 50 # distance between beam centers
+L = 150 # distance between beam centers
 fwhm = 300 # fwhm of the psf
 fov = 0.75*L # fov for the average σ_CRB
-size_nm = 2*L # field of view size (nm)
+size_nm = 1.2*L # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
@@ -44,7 +44,8 @@ Mr = np.sqrt(Mx**2 + My**2)
 
 av_σ_array = np.zeros(len(SBR_array))
 
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='raster scan')
+pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, 
+                           arr_type='raster scan')
 
 psf = np.zeros((K, size, size)) # array of sequential illuminations
 
@@ -73,11 +74,6 @@ fig, ax = plt.subplots()
 ax.plot(SBR_array[:-3], av_σ_array[:-3]) # SBR = 5 and inf are excluded
 ax.set_xlabel('SBR')
 ax.set_ylabel('average σ_CRB (nm)')
-
-sbr_efficiency = [av_σ_array[-1]/av_σ_array[-3], av_σ_array[-1]/av_σ_array[-2]]
-
-print(sbr_efficiency)
-
 
 #%% Save results
 

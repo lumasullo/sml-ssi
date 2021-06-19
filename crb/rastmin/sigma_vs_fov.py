@@ -24,9 +24,9 @@ psf_type = 'doughnut'
 center_value = True
 N = 500 # detected photons
 SBR = 5 # Signal to Background Ratio
-L = 50 # distance between beam centers
+L = 150 # distance between beam centers
 fwhm = 300 # fwhm of the psf
-size_nm = 300 # field of view size (nm)
+size_nm = 400 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
@@ -47,7 +47,8 @@ Mr = np.sqrt(Mx**2 + My**2)
 
 σ_CRB_array = np.zeros((len(fov_array), size, size))
 
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, arr_type='raster scan')
+pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, 
+                           arr_type='raster scan')
 
 psf = np.zeros((K, size, size)) # array of sequential illuminations
     
@@ -60,7 +61,8 @@ for i in range(K):
  
 #%% Calculate CRB and plot
     
-σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N, prior='rough loc')
+σ_CRB, Σ_CRB, Fr, sbr_rel = tools.crb(K, psf, SBR, step_nm, size_nm, N, 
+                                      prior='rough loc')
 
 
 fig, ax = plt.subplots()
@@ -126,7 +128,7 @@ config['params'] = {
 'K': K,
 'fwhm (nm)': fwhm,
 'size (nm)': size_nm,
-'step (nm)': step_nm,
+'px (nm)': step_nm,
 'psf_type': psf_type,
 'central excitation': center_value,
 'file name': filename}

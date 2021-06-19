@@ -19,12 +19,12 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'smct'
-#method = 'OT'
+#method = 'SMCT'
+method = 'OT'
 #method = 'minsted'
 psf_type = 'gaussian'
 center_value = False
-SBR = 10 # Signal to Background Ratio
+SBR = 5 # Signal to Background Ratio
 N_array = np.logspace(1.3, 3.477, num=25)
 
 L = 300 # ditance between beam centers
@@ -34,8 +34,8 @@ size_nm = 1.2*L # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-K = 6
-#K = 100
+#K = 6
+K = 100
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -81,8 +81,8 @@ ax.set_ylabel('average σ_CRB (nm)')
 #%% Save results
 
 path = os.getcwd()
-#filename = r'/ot_sigma_vs_n_L_' + str(L)
-filename = r'/smct_sigma_vs_n_L_' + str(L)
+filename = r'/ot_sigma_vs_n_L_' + str(L)
+#filename = r'/smct_sigma_vs_n_L_' + str(L)
 folder = r'/results'
 np.save(path + folder + filename + '_av_sigma_array.npy', av_σ_array)
 np.save(path + folder + filename + '_N_array' + '.npy', N_array)

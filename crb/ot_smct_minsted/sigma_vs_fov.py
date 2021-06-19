@@ -19,16 +19,16 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'smct'
-#method = 'OT'
+#method = 'SCMT'
+method = 'OT'
 #method = 'minsted'
 psf_type = 'gaussian'
 center_value = False
 N = 500 # detected photons
 SBR = 5 # Signal to Background Ratio
-L = 50 # distance between beam centers
-fwhm = 50 # fwhm of the psf
-size_nm = 350 # field of view size (nm)
+L = 300 # distance between beam centers
+fwhm = 300 # fwhm of the psf
+size_nm = 400 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
@@ -37,8 +37,8 @@ fov_array = np.append(fov_array, [1, 0.75 * L])
 
 fov = 'variable'
 
-#K = 100
-K = 6
+K = 100
+#K = 6
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -68,8 +68,8 @@ for i in range(K):
 
 
 fig, ax = plt.subplots()
-#fig.suptitle('OT CRB')
-fig.suptitle('SMCT CRB')
+fig.suptitle('OT CRB')
+#fig.suptitle('SMCT CRB')
 
 
 crbfig = ax.imshow(σ_CRB, interpolation=None, 
@@ -117,8 +117,8 @@ ax.set_ylabel('average σ_CRB (nm)')
 #%% Save results
 
 path = os.getcwd()
-#filename = r'/ot_sigma_vs_fov_L_' + str(L)
-filename = r'/smct_sigma_vs_fov_L_' + str(L)
+filename = r'/ot_sigma_vs_fov_L_' + str(L)
+#filename = r'/smct_sigma_vs_fov_L_' + str(L)
 
 folder = r'/results'
 np.save(path + folder + filename + '_av_sigma_array.npy', av_σ_array)

@@ -1,12 +1,12 @@
 [params]
-date and time = 2021-05-15 17:39:45.135496
+date and time = 2021-06-17 11:23:13.926653
 n = 500
-sbr = 10
+sbr = 5
 l (nm) = 100
-fov (nm) = 150.0
+fov (nm) = 75.0
 k = 4
-fwhm (nm) = 250
-size (nm) = 500
+fwhm (nm) = 300
+size (nm) = 300
 psf_type = doughnut
 central excitation = True
 file name = /minflux_sigma_vs_fov_L_100

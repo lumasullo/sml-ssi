@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-06-18 21:24:14.393419
+n = 500
+sbr = 5
+l (nm) = 100
+fov (nm) = 75.0
+k = 16
+fwhm (nm) = 50
+size (nm) = 400
+px (nm) = 1
+psf_type = gaussian
+central excitation = True
+file name = /rastmax_sigma_vs_fov_L_100fwhm50
+

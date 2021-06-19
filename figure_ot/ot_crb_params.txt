@@ -1,12 +1,13 @@
 [params]
-date and time = 2021-05-17 10:43:09.586010
+date and time = 2021-06-17 14:55:59.498798
 n = 500
-sbr = 10
+sbr = 5
 l (nm) = 300
 fov (nm) = 225.0
 k = 100
 fwhm (nm) = 300
 size (nm) = 300
+px (nm) = 1
 psf_type = gaussian
 central excitation = False
 file name = /ot_crb

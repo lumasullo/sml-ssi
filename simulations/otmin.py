@@ -24,7 +24,7 @@ psf_type = 'doughnut'
 center_value = False
 N = 500 # detected photons
 SBR = 5 # Signal to Background Ratio
-L = 50 # characteristic distance 
+L = 100 # characteristic distance 
 K = 50
 fov = .75*L # fov for the average σ_CRB
 fwhm = 300 # fwhm of the psf
@@ -32,8 +32,8 @@ size_nm = 200 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-r0_nm = [5, 5]
-samples = 1
+r0_nm = [0, 0]
+samples = 1000
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -110,7 +110,11 @@ ax.set_ylabel('Counts')
 
 plt.figure('x estimator')
 plt.hist(r0_mle_array[:, 0])
+plt.xlabel('x (nm)')
+plt.ylabel('Counts')
 
 plt.figure('y estimator')
 plt.hist(r0_mle_array[:, 1])
+plt.xlabel('y (nm)')
+plt.ylabel('Counts')
     

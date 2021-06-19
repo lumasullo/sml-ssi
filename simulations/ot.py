@@ -30,7 +30,7 @@ size_nm = 200 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-r0_nm = [5, 5]
+r0_nm = [0, 0]
 samples = 1
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]

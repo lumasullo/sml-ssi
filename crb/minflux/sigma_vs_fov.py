@@ -26,7 +26,7 @@ N = 500 # detected photons
 SBR = 5 # Signal to Background Ratio
 L = 50 # distance between beam centers
 fwhm = 300 # fwhm of the psf
-size_nm = 300 # field of view size (nm)
+size_nm = 400 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
@@ -47,7 +47,7 @@ Mr = np.sqrt(Mx**2 + My**2)
 
 σ_CRB_array = np.zeros((len(fov_array), size, size))
 
-pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0)
+pos_nm = tools.ebp_centres(K, L, center=center_value, arr_type='orbit', phi=0)
 
 psf = np.zeros((K, size, size)) # array of sequential illuminations
     
@@ -102,7 +102,7 @@ for i, fov in enumerate(fov_array):
     
 fig, ax = plt.subplots()
 
-ax.plot(fov_array[:-2], av_σ_array[:-2])
+ax.plot(fov_array[:-3], av_σ_array[:-3])
 ax.set_xlabel('fov diameter (nm)')
 ax.set_ylabel('average σ_CRB (nm)')
 
@@ -126,6 +126,7 @@ config['params'] = {
 'K': K,
 'fwhm (nm)': fwhm,
 'size (nm)': size_nm,
+'px (nm)': step_nm,
 'psf_type': psf_type,
 'central excitation': center_value,
 'file name': filename}

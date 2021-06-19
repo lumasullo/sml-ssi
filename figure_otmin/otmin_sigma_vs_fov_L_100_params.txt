@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-06-17 12:21:54.000451
+n = 500
+sbr = 5
+l (nm) = 100
+fov (nm) = 75.0
+k = 100
+fwhm (nm) = 300
+size (nm) = 400
+px (nm) = 1
+psf_type = doughnut
+central excitation = False
+file name = /ot_min_sigma_vs_fov_L_100
+

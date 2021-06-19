@@ -1,12 +1,12 @@
 [params]
-date and time = 2021-05-20 14:44:38.278202
+date and time = 2021-06-17 15:06:53.474663
 n = 500
-sbr = 10
+sbr = 5
 l (nm) = 100
-fov (nm) = 300.0
+fov (nm) = 75.0
 k = 6
 fwhm (nm) = 100
-size (nm) = 350
+size (nm) = 400
 px (nm) = 1
 psf_type = gaussian
 central excitation = False

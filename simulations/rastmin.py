@@ -28,21 +28,15 @@ L = 50 # characteristic distance
 K = 36
 k = int(np.sqrt(K))
 fov = .75*L # fov for the average σ_CRB
-fwhm = 3000 # fwhm of the psf
+fwhm = 300 # fwhm of the psf
 size_nm = 200 # field of view size (nm)
-step_nm = 1 # digital resolution
+step_nm = 5 # digital resolution
 size = int(size_nm/step_nm)
 
-r0_nm = [3, 3]
-samples = 1
+r0_nm = [0, 20]
+samples = 2
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
-
-x = np.arange(-size/2, size/2)
-y = np.arange(-size/2, size/2)
-
-Mx, My = np.meshgrid(x, y)
-Mr = np.sqrt(Mx**2 + My**2)
 
 pos_nm = tools.ebp_centres(K, L, center=center_value, phi=0, 
                            arr_type='raster scan')
@@ -82,7 +76,7 @@ for i in range(samples):
 
     n_array = tools.sim_exp(psf, r0_nm, N, SBR, size_nm, step_nm, DEBUG=False)
     
-    r0_mle = tools.mle(n_array, psf, SBR, px_nm=1, prior=None, s=None, DEBUG=False)
+    r0_mle = tools.mle(n_array, psf, SBR, px_nm=step_nm, prior=None, s=None, DEBUG=False)
     
     print(r0_mle)
     

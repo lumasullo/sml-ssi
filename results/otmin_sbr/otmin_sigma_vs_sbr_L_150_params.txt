@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-06-17 12:17:04.892211
+n = 500
+sbr = variable
+l (nm) = 150
+fov (nm) = 112.5
+k = 100
+fwhm (nm) = 300
+size (nm) = 180.0
+px (nm) = 1
+psf_type = doughnut
+central excitation = False
+file name = /otmin_sigma_vs_sbr_L_150
+

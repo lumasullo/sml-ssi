@@ -19,18 +19,16 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-#method = 'smct'
-#method = 'OT'
-method = 'minsted'
+#method = 'SMCT'
+method = 'OT'
+#method = 'minsted'
 psf_type = 'gaussian'
 center_value = False
 N = 500 # detected photons
-SBR = 10 # Signal to Background Ratio
+SBR = 5 # Signal to Background Ratio
 L = 50 # ditance between beam centers
-#L = 100
 fov = .75*L # fov for the average σ_CRB
 fwhm = 50 # fwhm of the psf
-#fwhm = 100
 size_nm = 300 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)

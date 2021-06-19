@@ -13,9 +13,17 @@ import scipy.stats as stats
 π = np.pi
 
 
-#TODO: fix bug  [0, 1] nm has the symmetry that [0, 0] nm should have
-
 def space_to_index(space, size_nm, px_nm):
+    
+    """
+    
+    NOTE: with the definiton of space_to_index and index_to_space, an array 
+    with size_nm = 200 nm and px_nm will go from x = -100 nm to x = 99 nm and 
+    y = -99 nm to y = 100 nm. This is arbitrary and ok as long as it is self 
+    consistent, i.e. this functions are used to go from (x, y) to (i, j). All 
+    space-coordinates array should also be consistent with this.
+    
+    """
 
     # size and px have to be in nm
     index = np.zeros(2)
@@ -26,7 +34,7 @@ def space_to_index(space, size_nm, px_nm):
 
 
 def index_to_space(index, size_nm, px_nm):
-
+    
     space = np.zeros(2)
     space[0] = index[1]*px_nm - size_nm/2
     space[1] = size_nm/2 - index[0]*px_nm
@@ -104,10 +112,10 @@ def gaussian(r, fwhm):
 def doughnut(r, fwhm):
     
     """ 2D donut """
-
+    
+    P = 1
     d = 1.2*fwhm
-#    β = (4/π) * 2 * np.log(2) * (P/d**2)  # normalization to 1
-    β = 2*np.e # TODO: check normalization
+    β = (4/π) * 2 * np.log(2) * (1/d**2)  # normalization to 1
     I = β * 2 * np.log(2) * (r**2/d**2) * np.exp(-4 * np.log(2) * (r**2/d**2))
 
     return I
@@ -119,10 +127,19 @@ def psf(central_zero, size, px, fwhm, psf_type):
 
     x0 = central_zero[0]
     y0 = central_zero[1]
-
+    
     x = np.arange(-size/2, size/2, px)
-    y = np.arange(-size/2, size/2, px)[::-1] # to match cartesian convention
+    y = -np.arange(-size/2, size/2, px) 
+    
+    # a minus sign is used in y to match cartesian convention
+    # note that reversing the array y would imply a mismatch of 1 px with
+    # respect to the index_to_space / space_to_index functions and thus
+    # introduce an error
+    
+#    print('x', x[0], x[-1])
+#    print('y', y[0], y[-1])
 
+    
     [Mx, My] = np.meshgrid(x, y)
     
     if psf_type == 'doughnut':
@@ -160,15 +177,20 @@ def ebp_centres(K, L, center, arr_type, phi=0):
     
     if arr_type == 'raster scan':
         
+        l = L / np.sqrt(2)
+        
         pos_nm = np.zeros((K, 2))
         
         k = np.sqrt(K)
-        x_exc = np.arange(0, k) * L/k + (L/k)/2 - L/2
-        y_exc = np.arange(0, k)[::-1] * L/k + (L/k)/2 - L/2
+        
+        # alternative definition of L
+#        x_exc = np.arange(0, k) * L/k + (L/k)/2 - L/2
+#        y_exc = np.arange(0, k)[::-1] * L/k + (L/k)/2 - L/2
+        
+        x_exc = np.arange(0, k) * l/(k-1) - l/2
+        y_exc = np.arange(0, k)[::-1] * l/(k-1) - l/2
 
         # y_exc is reversed to match cartesian convention, (L/K)/2 is added to place
-        # the excitation position in the center of the step (px in acquired image)
-        # i.e. [  10.  30.  50.  70.  90. 110.] for a L = 120 nm configuration
         
         xx_exc, yy_exc = np.meshgrid(x_exc, y_exc)
 
@@ -215,7 +237,7 @@ def ebp_centres(K, L, center, arr_type, phi=0):
     return pos_nm  
 
 
-def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, localizations=1, DEBUG=False):
+def sim_exp(psf, r0_nm, N, sbr, size_nm, px_nm, localizations=1, DEBUG=False):
     
     """
     
@@ -250,37 +272,9 @@ def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, localizations=1, DEBUG=False):
     r0 = space_to_index(r0_nm, size_nm, px_nm)
 
     K = np.shape(psf)[0] # number of expositions
-        
-    λ = np.zeros(K)
-    λb = np.zeros(K)
-    
-    for i in range(K):
-        
-        λ[i] = N*(SBR/(SBR+1)) * (psf[i, r0[0], r0[1]]/np.sum(psf, axis=0))[r0[0], r0[1]]
-        
-        print('λ[i]', λ[i])
-        
-    print('np.sum(λ)', np.sum(λ))
-    
-    #TODO: fix analog to CRB
-    
-#    import matplotlib.pyplot as plt
-#    
-#    plt.figure()
-#    plt.imshow(λ.reshape(9, 9))
-        
-    # backgroung given a SBR level
-    λb = np.mean(λ)/(SBR/K)
-    
-#    for i in range(K):
-#    
-#        λb[i] = λ[i]/SBR
-#        print('λb[i]', λb[i])
-    
-    print('λb', λb)
-    print('np.sum(λb)', np.sum(λb))
-
-    normλ = np.sum(λ) + λb
+            
+    # normalization term, sum of all psf intensities
+    norm_psf = np.sum(psf, axis=0)[r0[0], r0[1]]
     
     # p-parameter for each beam
     
@@ -288,10 +282,8 @@ def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, localizations=1, DEBUG=False):
     
     for i in range(K):
         
-        p[i] = (λ[i] + λb/K)/ normλ
-
-#    print('p.sum()',p.sum())
-        
+        p[i] = sbr/(sbr+1) * psf[i, r0[0], r0[1]]/norm_psf + (1/(sbr+1)) * (1/K)
+            
     if localizations != 1:    
         
         n_array = np.zeros((localizations, K))
@@ -358,7 +350,7 @@ def sim_exp_camera(r0_nm, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
     
     return n_array
 
-def crb(K, psf, SBR, px_nm, size_nm, N, prior='rough loc'):
+def crb(K, psf, sbr, px_nm, size_nm, N, prior='rough loc', s=50):
     
     """
     
@@ -367,17 +359,25 @@ def crb(K, psf, SBR, px_nm, size_nm, N, prior='rough loc'):
     Input
     ----------
     K : int, number of excitation beams
-    psf_array : (K, size, size) array, experimental or simulated PSF 
+    
+    psf: (K, size, size) array, experimental or simulated excitation beams
+    
     SBR : float, signal to background ratio
+    
     px_nm : pixel of the grid in nm
+    
     size_nm : size of the grid in nm
+    
     N : total number of photons
     
-    Method: calculates the Σ_CRB from the Fisher information matrix in 
-    emitter position space (Fr), from there it calculates Σ_CRB and σ_CRB
-    (S11-13, 10.1126/science.aak9913)
+    prior: type of a priori information, set to None if no prior is included
+    'rough loc' is a model for a previous rough localization (gaussian-like)
     
-    Output: Fr, Σ_CRB, σ_CRB
+    s: σ parameter of the gaussian information prior, s=50 nm as default
+    rough localization, s >> L would be equivalent to no prior, s << L might
+    not be a realistic assumption
+    
+    Output: σ_CRB, Σ_CRB, Fr, sbr_rel
     
     """
     
@@ -402,26 +402,19 @@ def crb(K, psf, SBR, px_nm, size_nm, N, prior='rough loc'):
     # SBR is computed as SBR(x, y), i.e. proportional to rel_sbr(x, y) instead 
     # of a constant
     
-    SBR = sbr_rel * SBR
-        
-    # normalization of PSF to Ns = N*(SBR/(SBR+1))
-
-    for i in range(K):
-        
-        λ[i, :, :] = N*(SBR/(SBR+1)) * (psf[i, :, :]/np.sum(psf, axis=0))
-                        
-    λb = np.sum(λ, axis=0)/SBR
+    sbr = sbr_rel * sbr
+    
+    # normalization term, sum of all psf intensities
+    norm_psf = np.sum(psf, axis = 0)
     
     for i in range(K):
         
-        # p-parameter arrays
-    
-        p[i, :, :] = (λ[i, :, :] + λb/K)/(λb + np.sum(λ, axis=0))
-
+        p[i, :, :] = sbr/(sbr+1) * psf[i,:,:]/norm_psf + (1/(sbr+1)) * (1/K)
+        
         # partial derivatives in x and y (minus sign for cartesian convention)
 
         dpdy[i, :, :], dpdx[i, :, :] = np.gradient(p[i, :, :], -dy, dx)
-        
+                
     # compute relevant information for every (i, j) position
         
     # TODO: vectorize this part of the code
@@ -439,9 +432,7 @@ def crb(K, psf, SBR, px_nm, size_nm, N, prior='rough loc'):
                 Fr_aux[k, :, :, i, j] = (1/p[k, i, j]) * A
                 
             if prior == 'rough loc':
-                            
-                s = 50 # in nm, sigma of the prior rough gaussian localization
-                            
+                                                        
                 Fr[:, :, i, j] = N * np.sum(Fr_aux[:, :, :, i, j], axis=0) + np.diag([1/s**2, 1/s**2])
                             
             elif prior is None:
@@ -599,21 +590,9 @@ def mle(n, psf, sbr, px_nm=1, prior=None, s=None, localizations=1,
                 l_aux[k, :, :] = n[i, k] * np.log(p[k, : , :])
                 
             likelihood[i, :, :] = np.sum(l_aux, axis=0)
-            
-            if prior == 'r<s':
-                    
-                x = np.arange(-size/2, size/2)
-                y = np.arange(-size/2, size/2)
-                
-                Mx, My = np.meshgrid(x, y)
-                Mr = np.sqrt(Mx**2 + My**2)
-                
-                likelihood[i, :, :][Mr>s/2] = -np.inf
-            
-            elif prior == 'rough loc':
-            
-                #TODO: generalize for px values different to 1 nm
-                                
+                        
+            if prior == 'rough loc':
+                                            
                 x = np.arange(-size/2, size/2) * px_nm
                 y = np.arange(-size/2, size/2) * px_nm
                 
@@ -628,7 +607,7 @@ def mle(n, psf, sbr, px_nm=1, prior=None, s=None, localizations=1,
             
                 pass
             
-                    # maximum likelihood estimator for the position   
+            # maximum likelihood estimator for the position   
         
             mle_index[i, :] = np.unravel_index(np.argmax(likelihood[i, :, :], 
                                                axis=None), 
@@ -644,21 +623,9 @@ def mle(n, psf, sbr, px_nm=1, prior=None, s=None, localizations=1,
             l_aux[i, :, :] = n[i] * np.log(p[i, : , :])
             
         likelihood = np.sum(l_aux, axis=0)
-            
-        if prior == 'r<s':
-                    
-            x = np.arange(-size/2, size/2)
-            y = np.arange(-size/2, size/2)
-            
-            Mx, My = np.meshgrid(x, y)
-            Mr = np.sqrt(Mx**2 + My**2)
-            
-            likelihood[Mr>s/2] = -np.inf
-            
-        elif prior == 'rough loc':
-            
-            #TODO: generalize for px values different to 1 nm
-                            
+                        
+        if prior == 'rough loc':
+                                        
             x = np.arange(-size/2, size/2) * px_nm
             y = np.arange(-size/2, size/2) * px_nm
             
@@ -673,8 +640,7 @@ def mle(n, psf, sbr, px_nm=1, prior=None, s=None, localizations=1,
             
             pass
                              
-        # maximum likelihood estimator for the position   
-        
+        # maximum likelihood estimator for the position    
         mle_index = np.unravel_index(np.argmax(likelihood, axis=None), 
                                      likelihood.shape)
         
@@ -749,87 +715,4 @@ def mle_camera(n, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
     mle_nm = index_to_space(mle_index, size, dx_nm)
 
     return mle_nm
-
-
-#def sim_exp(psf, r0_nm, N, SBR, size_nm, px_nm, DEBUG=False):
-#    
-#    """
-#    
-#    This function generates a simulated measurement of an ssi-sml experiment.
-#    
-#    Input:
-#    
-#    - psf: np.array (float)
-#    
-#        Stack of K PSFs of the minflux experiment
-#    
-#    - r0: np.array (float)
-#    
-#        2D position of the emitter (x, y)
-#        
-#    - N: int
-#        
-#        Number of total detected photons
-#        
-#    - SBR: int
-#    
-#        Signal to background ratio
-#        
-#    Output:
-#        
-#    - n_array: np.array (int)
-#    
-#        Array of measured photons at each exposition
-#    
-#    """
-#    
-#    r0 = space_to_index(r0_nm, size_nm, px_nm)
-#
-#    K = np.shape(psf)[0] # number of expositions
-#        
-#    λ = np.zeros(K)
-#    λb = np.zeros(K)
-#    
-#    for i in range(K):
-#        
-#        λ[i] = N*(SBR/(SBR+1)) * (psf[i, r0[0], r0[1]]/np.sum(psf, axis=0))[r0[0], r0[1]]
-#        
-#        print('λ[i]', λ[i])
-#        
-#    print('np.sum(λ)', np.sum(λ))
-#    
-#    #TODO: fix analog to CRB
-#    
-##    import matplotlib.pyplot as plt
-##    
-##    plt.figure()
-##    plt.imshow(λ.reshape(9, 9))
-#        
-#    # backgroung given a SBR level
-#    λb = np.mean(λ)/(SBR/K)
-#    
-##    for i in range(K):
-##    
-##        λb[i] = λ[i]/SBR
-##        print('λb[i]', λb[i])
-#    
-#    print('λb', λb)
-#    print('np.sum(λb)', np.sum(λb))
-#
-#    normλ = np.sum(λ) + λb
-#    
-#    # p-parameter for each beam
-#    
-#    p = np.zeros(K)
-#    
-#    for i in range(K):
-#        
-#        p[i] = (λ[i] + λb/K)/ normλ
-#
-##    print('p.sum()',p.sum())
-#                    
-#    n_array = np.random.multinomial(N, p)
-#    
-#    return n_array
-#            
     

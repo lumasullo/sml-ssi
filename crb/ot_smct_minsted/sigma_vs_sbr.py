@@ -19,8 +19,8 @@ import configparser
 
 #%% Set parameters and initialize arrays
 
-method = 'smct'
-#method = 'OT'
+#method = 'smct'
+method = 'OT'
 #method = 'minsted'
 psf_type = 'gaussian'
 center_value = False
@@ -34,8 +34,8 @@ size_nm = 1.2*L # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-K = 6
-#K = 100
+#K = 6
+K = 100
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 
@@ -78,15 +78,11 @@ ax.plot(SBR_array[:-3], av_σ_array[:-3])
 ax.set_xlabel('SBR')
 ax.set_ylabel('average σ_CRB (nm)')
 
-sbr_efficiency = [av_σ_array[-1]/av_σ_array[-3], av_σ_array[-1]/av_σ_array[-2]]
-
-print(sbr_efficiency)
-
 #%% Save results
 
 path = os.getcwd()
-#filename = r'/ot_sigma_vs_sbr_L_' + str(L)
-filename = r'/smct_sigma_vs_sbr_L_' + str(L)
+filename = r'/ot_sigma_vs_sbr_L_' + str(L)
+#filename = r'/smct_sigma_vs_sbr_L_' + str(L)
 
 folder = r'/results'
 np.save(path + folder + filename + '_av_sigma_array.npy', av_σ_array)

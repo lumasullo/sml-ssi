@@ -2,7 +2,7 @@
 """
 Created on Fri Feb  2 15:54:42 2018
 
-@author: Cibion
+@author: Luciano A. Masullo
 """
 
 # New matplotlib colormaps by Nathaniel J. Smith, Stefan van der Walt,

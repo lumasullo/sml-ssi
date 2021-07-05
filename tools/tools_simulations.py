@@ -2,9 +2,10 @@
 """
 Created on Fri Sep 13 15:29:23 2019
 
-@author: Luciano Masullo, Lars Richter and Lucía López
+@author: Luciano Masullo
 
-Different tools used for MINFLUX exp analysis and simulations
+Different tools used for sml-ssi analysis. Implementation of the mathematical
+framework described in Masullo et al (2021)
 
 """
 import numpy as np

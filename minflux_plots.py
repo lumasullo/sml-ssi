@@ -7,7 +7,7 @@ Created on Sat May 15 13:18:38 2021
 """
 
 import os
-wdir = r'/Users/Luciano/Documents/GitHub/ssi-sml'
+wdir = r'/Users/Luciano/Documents/GitHub/sml-ssi'
 os.chdir(wdir)
 
 import numpy as np
@@ -87,7 +87,7 @@ ax[0,0].set_xticks([-50, 0, 50])
 ax[0,0].set_yticks([-50, 0, 50])
 
 cbar = fig.colorbar(crbplot, ax=ax[0,0])
-cbar.ax.set_ylabel('$\overline{σ}_{CRB}$ (nm)')
+cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
 
 cbar.set_ticks([2, 4, 6, 8, 10, 12])
 
@@ -122,7 +122,7 @@ ax[0, 1].plot(fov_array, σ_CRB_fov['L100'], label='L = 100 nm', color='#97D8C4'
 ax[0, 1].plot(fov_array, σ_CRB_fov['L50'], label='L = 50 nm', color='#4059AD')  
 
 ax[0, 1].set_xlabel('FOV (nm)')
-ax[0, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[0, 1].set_ylabel('$\overline{σ}_{CRB}$ (nm)')
 
 ax[0, 1].set_xscale('linear')
 ax[0, 1].set_yscale('linear')

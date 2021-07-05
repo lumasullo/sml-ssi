@@ -7,7 +7,7 @@ Created on Sun Jun 27 16:33:23 2021
 """
 
 import os
-wdir = r'/Users/Luciano/Documents/GitHub/ssi-sml'
+wdir = r'/Users/Luciano/Documents/GitHub/sml-ssi'
 os.chdir(wdir)
 
 import numpy as np

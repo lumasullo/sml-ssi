@@ -27,7 +27,7 @@ All parameters are defined at the beginning of the script and saved into a confi
 
 4) These scripts are just short files that define arrays of variables and call and use the functions from sml-ssi/tools/tools_simulations.py
 That is where you can find all the functions that are actually used to perform all the calculations. 
-These functions are implementations of the theory developed in Masullo et al (2021).
+These functions are implementations of the theory described in Masullo et al (2021).
 
 5) The folder sml-ssi/simulations contains scripts to simulate single-molecule localization experiments for each method.
 

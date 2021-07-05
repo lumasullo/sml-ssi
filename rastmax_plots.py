@@ -88,6 +88,9 @@ ax[0,0].set_xlabel('x (nm)')
 ax[0,0].set_xlim(-size_nm/2, size_nm/2)
 ax[0,0].set_ylim(-size_nm/2, size_nm/2)
 
+ax[0,0].set_xticks([-300, -150, 0, 150, 300])
+ax[0,0].set_yticks([-300, -150, 0, 150, 300])
+
 cbar = fig.colorbar(crbplot, ax=ax[0,0])
 cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
 
@@ -102,55 +105,57 @@ ax[0,0].plot(pos_nm[:, 0], pos_nm[:, 1], markercolor1, markersize=markersize1,
 
 #%% Plot 1D σ vs fov
 
-ax[0, 1].plot(fov_array, σ_CRB_fov['L100'], label='L = 100 nm')  
-ax[0, 1].plot(fov_array, σ_CRB_fov['L100 fwhm50'], label='L = 100 nm, FWHM = 50 nm')
-ax[0, 1].plot(fov_array, σ_CRB_fov['L300'], label='L = 300 nm')
-ax[0, 1].plot(fov_array, σ_CRB_fov['L600'], label='L = 600 nm') 
+ax[0, 1].plot(fov_array, σ_CRB_fov['L600'], label='L = 600 nm, FWHM = 300 nm', color=u'#F4B942')
+ax[0, 1].plot(fov_array, σ_CRB_fov['L300'], label='L = 300 nm, FWHM = 300 nm', color=u'#97D8C4')
+ax[0, 1].plot(fov_array, σ_CRB_fov['L100'], label='L = 100 nm, FWHM = 300 nm', color=u'#4059AD')  
+ax[0, 1].plot(fov_array, σ_CRB_fov['L100 fwhm50'], label='L = 100 nm, FWHM = 50 nm', linestyle='dashed', color=u'#4059AD')
 
 ax[0, 1].set_xlabel('FOV (nm)')
-ax[0, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[0, 1].set_ylabel('$\overline{σ}_{CRB}$ (nm)')
 
 ax[0, 1].set_xscale('linear')
 ax[0, 1].set_yscale('linear')
 
 plt.tight_layout()
 
-ax[0, 1].legend(fontsize=8)
+ax[0, 1].legend(fontsize=8, loc='upper left')
 
 ax[0, 1].set_ylim([0, 60])
-
+ax[0, 1].set_xlim([fov_array[0], fov_array[-1]])
 
 #%% Plot 1D σ vs SBR
 
-ax[1, 0].plot(sbr_array, σ_CRB_sbr['L100']) 
-ax[1, 0].plot(sbr_array, σ_CRB_sbr['L100 fwhm50']) 
-ax[1, 0].plot(sbr_array, σ_CRB_sbr['L300']) 
-ax[1, 0].plot(sbr_array, σ_CRB_sbr['L600']) 
+ax[1, 0].plot(sbr_array, σ_CRB_sbr['L100'], color=u'#4059AD')   
+ax[1, 0].plot(sbr_array, σ_CRB_sbr['L100 fwhm50'], linestyle='dashed', color=u'#4059AD') 
+ax[1, 0].plot(sbr_array, σ_CRB_sbr['L300'], color=u'#97D8C4')
+ax[1, 0].plot(sbr_array, σ_CRB_sbr['L600'], color=u'#F4B942') 
 
 ax[1, 0].set_xlabel('SBR')
-ax[1, 0].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[1, 0].set_ylabel('$\overline{σ}_{CRB}$ (nm)')
 
 ax[1, 0].set_xscale('log')
 ax[1, 0].set_yscale('log')
 
-ax[1, 0].set_ylim([0.9, 50])
-
-#ax[1, 0].set_xticks([], minor=True)
-#ax[1, 0].set_xticks([1, 3, 10, 20])
-
-plt.tight_layout()
+ax[1, 0].set_ylim([1, 50])
+ax[1, 0].set_xlim([sbr_array[0], sbr_array[-1]])
 
 #%% Plot 1D σ vs N
 
-ax[1, 1].plot(N_array, σ_CRB_N['L100'])
-ax[1, 1].plot(N_array, σ_CRB_N['L100 fwhm50'])
-ax[1, 1].plot(N_array, σ_CRB_N['L300'])
-ax[1, 1].plot(N_array, σ_CRB_N['L600'])
+ax[1, 1].plot(N_array, σ_CRB_N['L100'], color=u'#4059AD')
+ax[1, 1].plot(N_array, σ_CRB_N['L100 fwhm50'], linestyle='dashed', color=u'#4059AD')
+ax[1, 1].plot(N_array, σ_CRB_N['L300'], color=u'#97D8C4')
+ax[1, 1].plot(N_array, σ_CRB_N['L600'], color=u'#F4B942')
 
 ax[1, 1].set_xlabel('N')
-ax[1, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[1, 1].set_ylabel('$\overline{σ}_{CRB}$ (nm)')
 
 ax[1, 1].set_xscale('log')
 ax[1, 1].set_yscale('log')
+
+ax[1, 1].set_ylim([0.5, 50])
+ax[1, 1].set_xlim([N_array[0], N_array[-1]])
+
+plt.tight_layout()
+
 
 

@@ -32,7 +32,7 @@ px_nm = 1 # digital resolution
 size = int(size_nm/px_nm)
 
 r_nm_0 = [0, 0]
-r_nm_1 = [53, 0]
+r_nm_1 = [50, 0]
 
 samples = 1000
 
@@ -154,7 +154,7 @@ plt.tight_layout()
 print(xmean_r0)
 print(ymean_r0)
 print(xmean_r1)
-print(ymean_r0)
+print(ymean_r1)
 
 
     

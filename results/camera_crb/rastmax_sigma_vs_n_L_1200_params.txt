@@ -1,0 +1,14 @@
+[params]
+date and time = 2021-06-27 19:56:45.136420
+n = variable
+sbr = 5
+l (nm) = 1200
+fov (nm) = 12.0
+k = 64
+fwhm (nm) = 300
+size (nm) = 60.0
+px (nm) = 1
+psf_type = gaussian
+central excitation = True
+file name = /rastmax_sigma_vs_n_L_1200
+

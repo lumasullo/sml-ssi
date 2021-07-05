@@ -84,6 +84,9 @@ ax[0,0].set_xlabel('x (nm)')
 ax[0,0].set_xlim(-size_nm/4, size_nm/4)
 ax[0,0].set_ylim(-size_nm/4, size_nm/4)
 
+ax[0,0].set_xticks([-50, 0, 50])
+ax[0,0].set_yticks([-50, 0, 50])
+
 cbar = fig.colorbar(crbplot, ax=ax[0,0])
 cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
 
@@ -100,88 +103,51 @@ ax[0,0].plot(pos_nm[:, 0], pos_nm[:, 1], markercolor1, markersize=markersize1,
 
 #%% Plot 1D σ vs fov
 
-ax[0, 1].plot(fov_array, σ_CRB_fov['L50'], label='L = 50 nm') 
-ax[0, 1].plot(fov_array, σ_CRB_fov['L100'], label='L = 100 nm') 
-ax[0, 1].plot(fov_array, σ_CRB_fov['L150'], label='L = 150 nm') 
+ax[0, 1].plot(fov_array, σ_CRB_fov['L150'], label='L = 150 nm', color='#F4B942') 
+ax[0, 1].plot(fov_array, σ_CRB_fov['L100'], label='L = 100 nm', color='#97D8C4')
+ax[0, 1].plot(fov_array, σ_CRB_fov['L50'], label='L = 50 nm', color='#4059AD')  
 
 ax[0, 1].set_xlabel('FOV (nm)')
-ax[0, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[0, 1].set_ylabel('$\overline{σ}_{CRB}$ (nm)')
 
 ax[0, 1].set_xscale('linear')
 ax[0, 1].set_yscale('linear')
 
 ax[0, 1].legend(fontsize=9)
 
+ax[0, 1].set_ylim([0, 20])
+ax[0, 1].set_xlim([10, 300])
+
 #%% Plot 1D σ vs SBR
 
-ax[1, 0].plot(sbr_array, σ_CRB_sbr['L50']) 
-ax[1, 0].plot(sbr_array, σ_CRB_sbr['L100']) 
-ax[1, 0].plot(sbr_array, σ_CRB_sbr['L150']) 
+ax[1, 0].plot(sbr_array, σ_CRB_sbr['L50'], color='#4059AD') 
+ax[1, 0].plot(sbr_array, σ_CRB_sbr['L100'], color='#97D8C4')
+ax[1, 0].plot(sbr_array, σ_CRB_sbr['L150'], color='#F4B942') 
 
 ax[1, 0].set_xlabel('SBR')
-ax[1, 0].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[1, 0].set_ylabel('$\overline{σ}_{CRB}$ (nm)')
 
 ax[1, 0].set_xscale('log')
 ax[1, 0].set_yscale('log')
 
-ax[1, 0].set_ylim([0.9, 11])
-
-
-#for axis in [ax[1, 0].xaxis, ax[1, 0].yaxis]:
-#for axis in [ax[1, 0].yaxis]:
-#    axis.set_major_formatter(ScalarFormatter())
-
-
-#ax[1, 0].set_xticks([], minor=True)
-#ax[1, 0].set_xticks([1, 2, 3, 5, 10, 20])
-#ax[1, 0].set_yticks([], minor=True)
-#ax[1, 0].set_yticks([1, 2, 3, 5, 7, 10])
+ax[1, 0].set_ylim([1, 11])
+ax[1, 0].set_xlim([sbr_array[0], sbr_array[-1]])
 
 
 #%% Plot 1D σ vs N
 
-ax[1, 1].plot(N_array, σ_CRB_N['L50']) 
-ax[1, 1].plot(N_array, σ_CRB_N['L100']) 
-ax[1, 1].plot(N_array, σ_CRB_N['L150']) 
+ax[1, 1].plot(N_array, σ_CRB_N['L50'], color='#4059AD') 
+ax[1, 1].plot(N_array, σ_CRB_N['L100'], color='#97D8C4')
+ax[1, 1].plot(N_array, σ_CRB_N['L150'], color='#F4B942') 
 
 ax[1, 1].set_xlabel('N')
-ax[1, 1].set_ylabel('$<σ_{CRB}>$ (nm)')
+ax[1, 1].set_ylabel('$\overline{σ}_{CRB}$ (nm)')
 
 ax[1, 1].set_xscale('log')
 ax[1, 1].set_yscale('log')
 
-#for axis in [ax[1, 1].xaxis, ax[1, 1].yaxis]:
-#for axis in [ax[1, 1].yaxis]:
-#    axis.set_major_formatter(ScalarFormatter())
-    
-#ax[1, 1].set_yticks([], minor=True)
-#ax[1, 1].set_yticks([1, 2, 3, 5, 7, 10])
-#ax[1, 1].set_yticks([1, 2, 4, 7, 14])
-
-
-#ax[1, 0].set_xticks([], minor=True)
-#ax[1, 1].set_xticks([20, 100, 1000])
-
-
-
-#%% add subfigures labels
-
-#letters = ['a)', 'b)', 'c)', 'd)']
-#for i, ax in enumerate(ax.flatten()):
-#    ax.text(-10, 0, letters[i], 
-#            size=15, weight='bold')
-#
-#import string
-#
-#for n, a in enumerate(ax.flat[1:]):
-#
-#    a.text(-0.3, 1.2, string.ascii_uppercase[n+1], transform=a.transAxes, 
-#            size=10, weight='bold')
-#    
-#a = ax.flat[0]
-#   
-#a.text(-0.65, 1.2, string.ascii_uppercase[0], transform=a.transAxes, 
-#       size=10, weight='bold')
+ax[1, 1].set_ylim([0.5, 25])
+ax[1, 1].set_xlim([N_array[0], N_array[-1]])
 
 plt.tight_layout()
 

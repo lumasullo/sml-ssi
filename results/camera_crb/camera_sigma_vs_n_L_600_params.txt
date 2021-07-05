@@ -1,0 +1,13 @@
+[params]
+date and time = 2021-06-27 17:00:05.525438
+n = variable
+sbr = 5
+l (nm) = 600
+fov (nm) = 30.0
+k = 16
+fwhm (nm) = 300
+size (nm) = 700
+physical px (nm) = 141.42135623730948
+simulation px (nm) = 1
+file name = /camera_sigma_vs_n_L_600
+

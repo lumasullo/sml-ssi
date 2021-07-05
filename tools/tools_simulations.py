@@ -299,57 +299,6 @@ def sim_exp(psf, r0_nm, N, sbr, size_nm, px_nm, localizations=1, DEBUG=False):
     return n_array
 
 
-def sim_exp_camera(r0_nm, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
-    
-    from scipy.special import erf
-    
-    σ_psf = sigma_psf
-#    dy_nm = dx_nm
-    size = int(range_nm/dx_nm)
-    
-    if np.sqrt(K).is_integer(): 
-        k = int(np.sqrt(K)) # k^2 is equivalent to the K expositions in MINFLUX CRB
-    else:
-        raise ValueError("K should be a perfect square number (i.e. 81, 64, etc)")
-    
-    p, λ, dpdx, dpdy, A, B, C, D = (np.zeros((size, size, k, k)) for i in range(8))
-    
-    x = np.arange(-range_nm/2, range_nm/2, dx_nm)
-    y = np.arange(-range_nm/2, range_nm/2, dx_nm)
-    
-    px_range_nm = k * px_size_nm
-    px = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
-    py = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
-    
-    # -y for cartesian coordinates
-    [Mx, My] = np.meshgrid(x, -y)  # emitter position matrices, dim: size x size (i.e. 100 x 100)
-    [Mpx, Mpy] = np.meshgrid(px, -py) # pixel coord matrices dim: k x k (i.e. 9 x 9)
-        
-    SBR = SBR*K #TODO: check this fix!!
-    
-    for i in range(k):
-        for j in range(k):
-            
-            # calculates terms
-            a = erf((Mpx[i, j] + px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
-            b = erf((Mpx[i, j] - px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
-            c = erf((Mpy[i, j] + px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
-            d = erf((Mpy[i, j] - px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
-            
-            p_0 = (a-b) * (c-d)
-            
-            # prob array for a given pixel (i, j) and for every position (x, y)
-            p[:, :, i, j] = (1/(K + SBR)) + (1/4) * (SBR/(K + SBR)) * p_0
-    
-    r0 = space_to_index(r0_nm, range_nm, dx_nm)        
-    p_r0 = p[r0[0], r0[1], :, :].ravel()
-    
-#    print(np.sum(p_r0))
-    
-    n_array = np.random.multinomial(N, p_r0)
-    
-    return n_array
-
 def crb(K, psf, sbr, px_nm, size_nm, N, prior='rough loc', s=50):
     
     """
@@ -444,88 +393,7 @@ def crb(K, psf, sbr, px_nm, size_nm, N, prior='rough loc', s=50):
             
     return σ_CRB, Σ_CRB, Fr, sbr_rel
 
-
-def crb_camera(K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
- 
-    """
-    Cramer-Rao Bound for camera-based localization
-    
-    Input
-    ----------
-        px_num:     total number of physical pixels in grid,
-                    e.g. px_num=81 if 9x9 grid
-        px_size_nm: pixel size of camera in nm
-        sigma_psf:  standard deviation of emission PSF in nm
-        SBR:        signal to background ratio
-        N :         total number of photons
-        range_nm:   grid range in emitter position space
-        dx_nm:      grid resolution along x-axis in emitter position space
-        inf:        boolean, if true, set SBR to infinity, default: false
-    
-    Returns
-    -------
-        crb:        Cramer-Rao bound for given set of input parameter
-    
-    """
-    
-    from scipy.special import erf
-    
-    σ_psf = sigma_psf
-    dy_nm = dx_nm
-    size = int(range_nm/dx_nm)
-    
-    if np.sqrt(K).is_integer(): 
-        k = int(np.sqrt(K)) # k^2 is equivalent to the K expositions in MINFLUX CRB
-    else:
-        raise ValueError("K should be a perfect square number (i.e. 81, 64, etc)")
-    
-    p, λ, dpdx, dpdy, A, B, C, D = (np.zeros((size, size, k, k)) for i in range(8))
-    
-    x = np.arange(-range_nm/2, range_nm/2, dx_nm)
-    y = np.arange(-range_nm/2, range_nm/2, dx_nm)
-    
-    px_range_nm = k * px_size_nm
-    px = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
-    py = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
-    
-    # -y for cartesian coordinates
-    [Mx, My] = np.meshgrid(x, -y)  # emitter position matrices, dim: size x size (i.e. 100 x 100)
-    [Mpx, Mpy] = np.meshgrid(px, -py) # pixel coord matrices dim: k x k (i.e. 9 x 9)
-        
-    for i in range(k):
-        for j in range(k):
-            
-            # calculates terms
-            a = erf((Mpx[i, j] + px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
-            b = erf((Mpx[i, j] - px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
-            c = erf((Mpy[i, j] + px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
-            d = erf((Mpy[i, j] - px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
-            
-            p_0 = (a-b) * (c-d)
-            
-            # prob array for a given pixel (i, j) and for every position (x, y)
-            p[:, :, i, j] = (1/(K + SBR)) + (1/4) * (SBR/(K + SBR)) * p_0
-            
-            # gradient of ps in each (x,y), careful with (i, j) -> (x, y)
-            dpdy[:, :, i, j] = np.gradient(p[:, :, i, j], -dy_nm, axis=0)
-            dpdx[:, :, i, j] = np.gradient(p[:, :, i, j], dx_nm, axis=1)
-       
-            # terms needed to compute CR bound for each (x,y) in emitter space
-            A[:, :, i, j] = (1/p[:, :, i, j]) * dpdx[:, :, i, j]**2
-            B[:, :, i, j] = (1/p[:, :, i, j]) * dpdy[:, :, i, j]**2
-            C[:, :, i, j] = (1/p[:, :, i, j]) *(dpdx[:, :, i, j] * dpdy[:, :, i, j])
-            D[:, :, i, j] = (1/p[:, :, i, j]) * (dpdx[:, :, i, j]**2 + dpdy[:, :, i, j]**2)
-                
-    # sigma Cramer-Rao numerator and denominator    
-    E = np.sum(D, axis=(2,3)) 
-    F = (np.sum(A, axis=(2,3)) * np.sum(B, axis=(2,3))) - np.sum(C, axis=(2,3))**2
-    
-    σ_CRB = np.sqrt(1/(2*N))*np.sqrt(E/F)
-    
-    return σ_CRB
-
-
-     
+   
 def mle(n, psf, sbr, px_nm=1, prior=None, s=None, localizations=1, 
         DEBUG=False):
     
@@ -656,7 +524,27 @@ def mle(n, psf, sbr, px_nm=1, prior=None, s=None, localizations=1,
         return mle_nm
     
     
-def mle_camera(n, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
+def crb_camera(K, px_size_nm, sigma_psf, sbr, N, range_nm, dx_nm):
+ 
+    """
+    Cramer-Rao Bound for camera-based localization
+    
+    Input
+    ----------
+        K:          total number of physical pixels in grid,
+                    e.g. K=81 if 9x9 grid
+        px_size_nm: pixel size of camera in nm
+        sigma_psf:  standard deviation of emission PSF in nm
+        sbr:        signal to background ratio
+        N :         total number of photons
+        range_nm:   grid range in emitter position space
+        dx_nm:      grid resolution along x-axis in emitter position space
+    
+    Returns
+    -------
+        crb:        Scalar CRB for the given set of input parameters
+    
+    """
     
     from scipy.special import erf
     
@@ -672,7 +560,7 @@ def mle_camera(n, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
     p, λ, dpdx, dpdy, A, B, C, D = (np.zeros((size, size, k, k)) for i in range(8))
     
     x = np.arange(-range_nm/2, range_nm/2, dx_nm)
-    y = np.arange(-range_nm/2, range_nm/2, dx_nm)
+    y = np.arange(-range_nm/2, range_nm/2, dy_nm)
     
     px_range_nm = k * px_size_nm
     px = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
@@ -691,12 +579,117 @@ def mle_camera(n, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
             c = erf((Mpy[i, j] + px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
             d = erf((Mpy[i, j] - px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
             
-            p_0 = (a-b) * (c-d)
+            p_0 = (1/4) * (a-b) * (c-d)
             
-            SBR = SBR*K #TODO: check this fix!!
+            # p array for a given pixel (i, j) and for every position (x, y)
+            p[:, :, i, j] = sbr/(sbr+1) * p_0 + + (1/(sbr+1)) * (1/K)
+            
+            # gradients of p in each (x,y), careful with (i, j) -> (x, y)
+            dpdy[:, :, i, j] = np.gradient(p[:, :, i, j], -dy_nm, axis=0)
+            dpdx[:, :, i, j] = np.gradient(p[:, :, i, j], dx_nm, axis=1)
+       
+            # terms needed to compute CRB for each (x,y) in emitter space
+            A[:, :, i, j] = (1/p[:, :, i, j]) * dpdx[:, :, i, j]**2
+            B[:, :, i, j] = (1/p[:, :, i, j]) * dpdy[:, :, i, j]**2
+            C[:, :, i, j] = (1/p[:, :, i, j]) *(dpdx[:, :, i, j] * dpdy[:, :, i, j])
+            D[:, :, i, j] = (1/p[:, :, i, j]) * (dpdx[:, :, i, j]**2 + dpdy[:, :, i, j]**2)
+                
+    # sigma CRB analytical expression for the scalar form    
+    E = np.sum(D, axis=(2,3)) 
+    F = (np.sum(A, axis=(2,3)) * np.sum(B, axis=(2,3))) - np.sum(C, axis=(2,3))**2
+    
+    σ_CRB = np.sqrt(1/(2*N))*np.sqrt(E/F)
+    
+    return σ_CRB
+    
 
-            # prob array for a given pixel (i, j) and for every position (x, y)
-            p[:, :, i, j] = (1/(K + SBR)) + (1/4) * (SBR/(K + SBR)) * p_0
+def sim_exp_camera(r0_nm, K, px_size_nm, sigma_psf, sbr, N, range_nm, dx_nm):
+    
+    from scipy.special import erf
+    
+    σ_psf = sigma_psf
+    dy_nm = dx_nm
+    size = int(range_nm/dx_nm)
+    
+    if np.sqrt(K).is_integer(): 
+        k = int(np.sqrt(K)) # k^2 is equivalent to the K expositions in MINFLUX CRB
+    else:
+        raise ValueError("K should be a perfect square number (i.e. 81, 64, etc)")
+    
+    p, λ, dpdx, dpdy, A, B, C, D = (np.zeros((size, size, k, k)) for i in range(8))
+    
+    x = np.arange(-range_nm/2, range_nm/2, dx_nm)
+    y = np.arange(-range_nm/2, range_nm/2, dy_nm)
+    
+    px_range_nm = k * px_size_nm
+    px = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
+    py = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
+    
+    # -y for cartesian coordinates
+    [Mx, My] = np.meshgrid(x, -y)  # emitter position matrices, dim: size x size (i.e. 100 x 100)
+    [Mpx, Mpy] = np.meshgrid(px, -py) # pixel coord matrices dim: k x k (i.e. 9 x 9)
+            
+    for i in range(k):
+        for j in range(k):
+            
+            # calculates terms
+            a = erf((Mpx[i, j] + px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
+            b = erf((Mpx[i, j] - px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
+            c = erf((Mpy[i, j] + px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
+            d = erf((Mpy[i, j] - px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
+            
+            p_0 = (1/4) * (a-b) * (c-d)
+            
+            # p array for a given pixel (i, j) and for every position (x, y)
+            p[:, :, i, j] = sbr/(sbr+1) * p_0 + + (1/(sbr+1)) * (1/K)
+    
+    r0 = space_to_index(r0_nm, range_nm, dx_nm)        
+    p_r0 = p[r0[0], r0[1], :, :].ravel()
+        
+    n_array = np.random.multinomial(N, p_r0)
+    
+    return n_array    
+    
+    
+def mle_camera(n, K, px_size_nm, sigma_psf, sbr, N, range_nm, dx_nm):
+    
+    from scipy.special import erf
+    
+    σ_psf = sigma_psf
+    dy_nm = dx_nm
+    size = int(range_nm/dx_nm)
+    
+    if np.sqrt(K).is_integer(): 
+        k = int(np.sqrt(K)) # k^2 is equivalent to the K expositions in MINFLUX CRB
+    else:
+        raise ValueError("K should be a perfect square number (i.e. 81, 64, etc)")
+    
+    p, λ, dpdx, dpdy, A, B, C, D = (np.zeros((size, size, k, k)) for i in range(8))
+    
+    x = np.arange(-range_nm/2, range_nm/2, dx_nm)
+    y = np.arange(-range_nm/2, range_nm/2, dy_nm)
+    
+    px_range_nm = k * px_size_nm
+    px = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
+    py = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
+    
+    # -y for cartesian coordinates
+    [Mx, My] = np.meshgrid(x, -y)  # emitter position matrices, dim: size x size (i.e. 100 x 100)
+    [Mpx, Mpy] = np.meshgrid(px, -py) # pixel coord matrices dim: k x k (i.e. 9 x 9)
+        
+    for i in range(k):
+        for j in range(k):
+            
+            # calculates terms
+            a = erf((Mpx[i, j] + px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
+            b = erf((Mpx[i, j] - px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
+            c = erf((Mpy[i, j] + px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
+            d = erf((Mpy[i, j] - px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
+            
+            p_0 = (1/4) * (a-b) * (c-d)
+            
+            # p array for a given pixel (i, j) and for every position (x, y)
+            p[:, :, i, j] = sbr/(sbr+1) * p_0 + + (1/(sbr+1)) * (1/K)
             
             
     p = p.reshape(size, size, K)        
@@ -715,4 +708,84 @@ def mle_camera(n, K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
     mle_nm = index_to_space(mle_index, size, dx_nm)
 
     return mle_nm
+
+
+#def crb_camera(K, px_size_nm, sigma_psf, SBR, N, range_nm, dx_nm):
+# 
+#    """
+#    Cramer-Rao Bound for camera-based localization
+#    
+#    Input
+#    ----------
+#        px_num:     total number of physical pixels in grid,
+#                    e.g. px_num=81 if 9x9 grid
+#        px_size_nm: pixel size of camera in nm
+#        sigma_psf:  standard deviation of emission PSF in nm
+#        SBR:        signal to background ratio
+#        N :         total number of photons
+#        range_nm:   grid range in emitter position space
+#        dx_nm:      grid resolution along x-axis in emitter position space
+#        inf:        boolean, if true, set SBR to infinity, default: false
+#    
+#    Returns
+#    -------
+#        crb:        Cramer-Rao bound for given set of input parameter
+#    
+#    """
+#    
+#    from scipy.special import erf
+#    
+#    σ_psf = sigma_psf
+#    dy_nm = dx_nm
+#    size = int(range_nm/dx_nm)
+#    
+#    if np.sqrt(K).is_integer(): 
+#        k = int(np.sqrt(K)) # k^2 is equivalent to the K expositions in MINFLUX CRB
+#    else:
+#        raise ValueError("K should be a perfect square number (i.e. 81, 64, etc)")
+#    
+#    p, λ, dpdx, dpdy, A, B, C, D = (np.zeros((size, size, k, k)) for i in range(8))
+#    
+#    x = np.arange(-range_nm/2, range_nm/2, dx_nm)
+#    y = np.arange(-range_nm/2, range_nm/2, dx_nm)
+#    
+#    px_range_nm = k * px_size_nm
+#    px = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
+#    py = np.arange(-px_range_nm/2, px_range_nm/2, px_size_nm) + px_size_nm/2
+#    
+#    # -y for cartesian coordinates
+#    [Mx, My] = np.meshgrid(x, -y)  # emitter position matrices, dim: size x size (i.e. 100 x 100)
+#    [Mpx, Mpy] = np.meshgrid(px, -py) # pixel coord matrices dim: k x k (i.e. 9 x 9)
+#        
+#    for i in range(k):
+#        for j in range(k):
+#            
+#            # calculates terms
+#            a = erf((Mpx[i, j] + px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
+#            b = erf((Mpx[i, j] - px_size_nm/2 - Mx)/(np.sqrt(2)*σ_psf))
+#            c = erf((Mpy[i, j] + px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
+#            d = erf((Mpy[i, j] - px_size_nm/2 - My)/(np.sqrt(2)*σ_psf))
+#            
+#            p_0 = (a-b) * (c-d)
+#            
+#            # prob array for a given pixel (i, j) and for every position (x, y)
+#            p[:, :, i, j] = (1/(K + SBR)) + (1/4) * (SBR/(K + SBR)) * p_0
+#            
+#            # gradient of ps in each (x,y), careful with (i, j) -> (x, y)
+#            dpdy[:, :, i, j] = np.gradient(p[:, :, i, j], -dy_nm, axis=0)
+#            dpdx[:, :, i, j] = np.gradient(p[:, :, i, j], dx_nm, axis=1)
+#       
+#            # terms needed to compute CR bound for each (x,y) in emitter space
+#            A[:, :, i, j] = (1/p[:, :, i, j]) * dpdx[:, :, i, j]**2
+#            B[:, :, i, j] = (1/p[:, :, i, j]) * dpdy[:, :, i, j]**2
+#            C[:, :, i, j] = (1/p[:, :, i, j]) *(dpdx[:, :, i, j] * dpdy[:, :, i, j])
+#            D[:, :, i, j] = (1/p[:, :, i, j]) * (dpdx[:, :, i, j]**2 + dpdy[:, :, i, j]**2)
+#                
+#    # sigma Cramer-Rao numerator and denominator    
+#    E = np.sum(D, axis=(2,3)) 
+#    F = (np.sum(A, axis=(2,3)) * np.sum(B, axis=(2,3))) - np.sum(C, axis=(2,3))**2
+#    
+#    σ_CRB = np.sqrt(1/(2*N))*np.sqrt(E/F)
+#    
+#    return σ_CRB
     

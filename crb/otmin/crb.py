@@ -24,14 +24,14 @@ psf_type = 'doughnut'
 center_value = False
 N = 500 # detected photons
 SBR = 5 # Signal to Background Ratio
-L = 50 # ditance between beam centers
+L = 100 # ditance between beam centers
 fov = .75*L # fov for the average σ_CRB
 fwhm = 300 # fwhm of the psf
 size_nm = 300 # field of view size (nm)
 step_nm = 1 # digital resolution
 size = int(size_nm/step_nm)
 
-K = 100
+K = 50
 
 extent = [-size_nm/2, size_nm/2, -size_nm/2, size_nm/2]
 

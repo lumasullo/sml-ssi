@@ -30,3 +30,5 @@ That is where you can find all the functions that are actually used to perform a
 These functions are implementations of the theory developed in Masullo et al (2021).
 
 5) The folder sml-ssi/simulations contains scripts to simulate single-molecule localization experiments for each method.
+
+If you need help, or have comments or suggestions, please write to: lu.masullo@gmail.com

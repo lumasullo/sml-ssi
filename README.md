@@ -5,9 +5,12 @@ Repository with code to study Single-molecule Localization with Sequential Struc
 
 1) Clone the repository
 2) Install the necessary packages (matplotlib, numpy, scipy, configparser)
-3) Run the  [method]_plots.py files
+3) Run the  [method]_plots.py   
 
 where [method] = ot, otmin, minflux, rastmin, rastmax, camera
+
+NOTE: inside the script you have to change the wdir =[path]/sml-ssi 
+[path] should be the absolute path to the folder where you cloned the repo
 
 This should produce the different figures in the manuscript.
 

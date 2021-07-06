@@ -9,9 +9,6 @@ Repository with code to study Single-molecule Localization with Sequential Struc
 
 where [method] = ot, otmin, minflux, rastmin, rastmax, camera
 
-NOTE: inside the script you have to change the wdir =[path]/sml-ssi 
-[path] should be the absolute path to the folder where you cloned the repo
-
 This should produce the different figures in the manuscript.
 
 - How to explore new configurations and produce new simulated data or reproduce the data in Masullo et al (2021):
@@ -33,5 +30,7 @@ That is where you can find all the functions that are actually used to perform a
 These functions are implementations of the theory described in Masullo et al (2021).
 
 5) The folder sml-ssi/simulations contains scripts to simulate single-molecule localization experiments for each method.
+
+NOTE: The first lines of the scripts automatically fix the working directory, which should be [path]/sml-ssi where [path] is the absolute path to the folder where you cloned the repo. This should work fine for any Python environment, but has only been checked in Anaconda + Spyder.
 
 If you need help, or have comments or suggestions, please write me to: lu.masullo@gmail.com

@@ -7,8 +7,6 @@ Created on Sat May 15 13:18:38 2021
 """
 
 import os
-wdir = r'/Users/Luciano/Documents/GitHub/sml-ssi'
-os.chdir(wdir)
 
 import numpy as np
 import tools.colormaps as cmaps
@@ -18,8 +16,7 @@ from matplotlib.ticker import ScalarFormatter
 import configparser
 
 folder = '/figure_rastmin/'
-
-os.chdir(wdir + folder)
+os.chdir(os.getcwd() + folder)
 
 N_array = np.load('rastmin_sigma_vs_n_L_50_N_array.npy')
 

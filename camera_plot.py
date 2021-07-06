@@ -7,15 +7,12 @@ Created on Sun Jun 27 16:33:23 2021
 """
 
 import os
-wdir = r'/Users/Luciano/Documents/GitHub/sml-ssi'
-os.chdir(wdir)
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 folder = '/figure_camera/'
-
-os.chdir(wdir + folder)
+os.chdir(os.getcwd() + folder)
 
 N_array = np.load('rastmax_sigma_vs_n_L_1200_N_array.npy')
 

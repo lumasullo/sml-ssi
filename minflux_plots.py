@@ -17,8 +17,7 @@ import matplotlib.pyplot as plt
 import configparser
 
 folder = '/figure_minflux/'
-
-os.chdir(wdir + folder)
+os.chdir(os.getcwd() + folder)
 
 N_array = np.load('minflux_sigma_vs_n_L_50_N_array.npy')
 

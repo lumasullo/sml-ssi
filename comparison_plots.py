@@ -7,8 +7,6 @@ Created on Sat May 15 13:18:38 2021
 """
 
 import os
-wdir = r'/Users/Luciano/Documents/GitHub/sml-ssi'
-os.chdir(wdir)
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,8 +14,7 @@ import matplotlib.pyplot as plt
 plt.close('all')
 
 folder = '/figure_comparison/'
-
-os.chdir(wdir + folder)
+os.chdir(os.getcwd() + folder)
 
 σ_CRB = dict()
 σ_CRB['minflux'] = np.load('minflux_crb_σ_CRB.npy')

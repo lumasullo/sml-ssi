@@ -20,8 +20,7 @@ import configparser
 plt.close('all')
 
 folder = '/figure_otmin/'
-
-os.chdir(wdir + folder)
+os.chdir(os.getcwd() + folder)
 
 N_array = np.load('otmin_sigma_vs_n_L_50_N_array.npy')
 

@@ -7,7 +7,11 @@ Created on Thu May 13 14:43:20 2021
 """
 
 import os
-wdir = r'/Users/Luciano/Documents/GitHub/sml-ssi'
+from os.path import dirname as up
+
+# use .../sml-ssi main folder as working directory
+cwd = os.getcwd()
+wdir = up(up(cwd))
 os.chdir(wdir)
 
 import numpy as np

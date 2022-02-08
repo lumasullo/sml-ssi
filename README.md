@@ -11,7 +11,7 @@ where [method] = ot, otmin, minflux, rastmin, rastmax, camera
 
 This should produce the different figures in the manuscript.
 
-- How to explore new configurations and produce new simulated data or reproduce the data in Masullo et al (2021):
+- How to explore new configurations and produce new simulated data or reproduce the data in Masullo et al (2022):
 
 1) Go the the folder "sml-ssi/crb/[method]" and open the desired script. They work as follows:
    - crb.py produces a 2D CRB map

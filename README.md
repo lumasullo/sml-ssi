@@ -1,7 +1,7 @@
 # sml-ssi
 Repository with code to study Single-molecule Localization with Sequential Structured Illumination. It contains code to numerically calculate CRB of different configurations and simulate (Monte Carlo) experiments and measurements.
 
-- How to reproduce the figures contained in Masullo et al (2021):
+- How to reproduce the figures contained in Masullo et al (2022) [https://www.sciencedirect.com/science/article/pii/S2667074721000367]:
 
 1) Clone the repository
 2) Install the necessary packages (matplotlib, numpy, scipy, configparser)

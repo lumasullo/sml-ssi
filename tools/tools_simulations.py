@@ -300,7 +300,7 @@ def sim_exp(psf, r0_nm, N, sbr, size_nm, px_nm, localizations=1, DEBUG=False):
     return n_array
 
 
-def crb(K, psf, sbr, px_nm, size_nm, N, prior='rough loc', s=50):
+def crb(K, psf, sbr, px_nm, size_nm, N, prior='rough loc', s=50, c=1):
     
     """
     
@@ -319,6 +319,8 @@ def crb(K, psf, sbr, px_nm, size_nm, N, prior='rough loc', s=50):
     size_nm : size of the grid in nm
     
     N : total number of photons
+    
+    c: multiphoton order (e.g c=1 1-photon, c=2 2-photon)
     
     prior: type of a priori information, set to None if no prior is included
     'rough loc' is a model for a previous rough localization (gaussian-like)
@@ -353,6 +355,9 @@ def crb(K, psf, sbr, px_nm, size_nm, N, prior='rough loc', s=50):
     # of a constant
     
     sbr = sbr_rel * sbr
+    
+    # non-linearity due to multiphoton process of order c (c=1, linear regime)
+    psf = psf**c
     
     # normalization term, sum of all psf intensities
     norm_psf = np.sum(psf, axis = 0)

@@ -28,9 +28,9 @@ from scipy.ndimage.interpolation import rotate
 method = 'MINFLUX'
 psf_type = 'doughnut'
 center_value = True
-N = 500 # detected photons
+N = 1000 # detected photons
 SBR = 4 # Signal to Background Ratio
-L = 100 # ditance between beam centers
+L = 83 # ditance between beam centers
 fov = .75*L # fov for the average σ_CRB
 c_array = np.array([1, 2, 3]) # order of the multiphotonic process (c=1 linear)
 fwhm_array = np.array([300, 370, 600]) # psfs for (647, 800 and 1300 nm)
@@ -73,7 +73,7 @@ for _ , (ax, c, fwhm) in enumerate(zip(*iterables)):
         
     crbfig = ax.imshow(σ_CRB, interpolation=None, 
                        extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
-                       cmap='Spectral_r', vmin=0.5, vmax=8)
+                       cmap='Spectral_r', vmin=1, vmax=5)
     
     ax.set_ylabel('y (nm)')
     ax.set_xlabel('x (nm)')
@@ -97,6 +97,8 @@ for _ , (ax, c, fwhm) in enumerate(zip(*iterables)):
     av_sigma = np.mean(σ_CRB_cropped)
     
     print('Average precision is', np.around(av_sigma, 2), ' nm')
+    
+plt.tight_layout()
     
 #%% Save results
 

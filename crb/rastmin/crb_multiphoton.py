@@ -28,7 +28,7 @@ plt.close('all')
 method = 'RASTMIN'
 psf_type = 'doughnut'
 center_value = True
-N = 500 # detected photons
+N = 1000 # detected photons
 SBR = 4 # Signal to Background Ratio
 L = 100 # characteristic distance 
 fov = .75*L # fov for the average σ_CRB
@@ -75,7 +75,7 @@ for _ , (ax, c, fwhm) in enumerate(zip(*iterables)):
         
     crbfig = ax.imshow(σ_CRB, interpolation=None, 
                         extent=[-size_nm/2, size_nm/2, -size_nm/2, size_nm/2], 
-                        cmap='Spectral_r', vmin=0.5, vmax=8)
+                        cmap='Spectral_r', vmin=1, vmax=5)
     
     ax.set_ylabel('y (nm)')
     ax.set_xlabel('x (nm)')
@@ -85,7 +85,7 @@ for _ , (ax, c, fwhm) in enumerate(zip(*iterables)):
     # cbar = fig0.colorbar(crbfig, ax=ax)
     # cbar.ax.set_ylabel('$σ_{CRB}$ (nm)')
     
-    circ = plt.Circle((0,0), radius=L/2, zorder=10, linestyle='--', 
+    circ = plt.Circle((0,0), radius=(L/2)*(83/100), zorder=10, linestyle='--', 
                       facecolor='None', edgecolor='k')
     ax.add_patch(circ)
     
